@@ -1,0 +1,5 @@
+add_subdirectory(common)
+add_subdirectory(page)
+add_subdirectory(tree)
+add_subdirectory(disk)
+add_subdirectory(buffer)

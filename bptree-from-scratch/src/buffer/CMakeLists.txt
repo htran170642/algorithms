@@ -1,0 +1,2 @@
+add_library(buffer_pool_manager STATIC buffer_pool_manager.cpp)
+target_link_libraries(buffer_pool_manager PUBLIC disk_manager)
