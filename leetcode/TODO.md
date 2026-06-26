@@ -63,9 +63,9 @@
 
 ## Problems
 
-- [ ] LC 125 - Valid Palindrome
-- [ ] LC 167 - Two Sum II
-- [ ] LC 283 - Move Zeroes
+- [x] LC 125 - Valid Palindrome
+- [x] LC 167 - Two Sum II
+- [x] LC 283 - Move Zeroes
 - [ ] LC 11 - Container With Most Water
 - [ ] LC 15 - 3Sum
 - [ ] LC 42 - Trapping Rain Water

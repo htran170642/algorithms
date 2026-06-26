@@ -1,6 +1,6 @@
 # Hashset
 
-## Daash hiệu
+## Dấu hiệu
 
 - Check tồn tại
 - Check duplicate
