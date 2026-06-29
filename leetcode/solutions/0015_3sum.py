@@ -21,6 +21,8 @@ class Solution:
 
         return [list(val) for val in ans]
 
+        # Time: O(n^2), Space: O(n)
+
 def main():
     solution = Solution()
     nums = [-1,0,1,2,-1,-4]

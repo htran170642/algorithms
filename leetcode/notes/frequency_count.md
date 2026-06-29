@@ -13,3 +13,13 @@ for item in data:
 
 Build O(n),
 Lookup O(1) 
+
+
+# Expand
+count[s[right]] += 1
+
+# ...
+
+# Shrink
+count[s[left]] -= 1
+left += 1
