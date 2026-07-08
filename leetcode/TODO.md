@@ -94,9 +94,9 @@
 
 - [x] LC 121 - Best Time to Buy and Sell Stock
 - [x] LC 3 - Longest Substring Without Repeating Characters
-- [ ] LC 424 - Longest Repeating Character Replacement
-- [ ] LC 567 - Permutation in String
-- [ ] LC 438 - Find All Anagrams in a String
+- [x] LC 424 - Longest Repeating Character Replacement
+- [x] LC 567 - Permutation in String
+- [x] LC 438 - Find All Anagrams in a String
 - [ ] LC 76 - Minimum Window Substring
 - [ ] LC 239 - Sliding Window Maximum
 
