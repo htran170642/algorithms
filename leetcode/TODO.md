@@ -122,10 +122,10 @@
 
 ## Problems
 
-- [ ] LC 704 - Binary Search
-- [ ] LC 35 - Search Insert Position
-- [ ] LC 33 - Search in Rotated Sorted Array
-- [ ] LC 153 - Find Minimum in Rotated Sorted Array
+- [x] LC 704 - Binary Search
+- [x] LC 35 - Search Insert Position
+- [x] LC 33 - Search in Rotated Sorted Array
+- [x] LC 153 - Find Minimum in Rotated Sorted Array
 - [ ] LC 875 - Koko Eating Bananas
 - [ ] LC 1011 - Capacity To Ship Packages Within D Days
 - [ ] LC 410 - Split Array Largest Sum
