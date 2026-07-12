@@ -126,8 +126,10 @@
 - [x] LC 35 - Search Insert Position
 - [x] LC 33 - Search in Rotated Sorted Array
 - [x] LC 153 - Find Minimum in Rotated Sorted Array
-- [ ] LC 875 - Koko Eating Bananas
-- [ ] LC 1011 - Capacity To Ship Packages Within D Days
+- [x] LC 875 - Koko Eating Bananas
+- [x] LC 1011 - Capacity To Ship Packages Within D Days
+- [] LC 1482 - Minimum number of days to make m bouquests
+- [] LC 2187 - 
 - [ ] LC 410 - Split Array Largest Sum
 
 ## Review
