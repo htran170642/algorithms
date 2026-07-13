@@ -1,0 +1,12 @@
+# One build dir per preset (build/asan-23, build/tsan-20, ...), each containing
+# the FetchContent'd googletest + benchmark sources. Never commit these.
+build/
+
+# clang-tidy scratch
+.cache/
+
+# Editor / tooling
+compile_commands.json
+*.dot
+perf.data*
+core

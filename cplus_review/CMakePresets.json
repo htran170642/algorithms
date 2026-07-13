@@ -1,0 +1,72 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+
+    { "name": "std20", "hidden": true, "inherits": "base",
+      "cacheVariables": { "CMAKE_CXX_STANDARD": "20" } },
+    { "name": "std23", "hidden": true, "inherits": "base",
+      "cacheVariables": { "CMAKE_CXX_STANDARD": "23" } },
+
+    { "name": "debug-20",   "inherits": "std20", "displayName": "Debug C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "none" } },
+    { "name": "debug-23",   "inherits": "std23", "displayName": "Debug C++23",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "none" } },
+
+    { "name": "asan-20",    "inherits": "std20", "displayName": "ASan+UBSan C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "address" } },
+    { "name": "asan-23",    "inherits": "std23", "displayName": "ASan+UBSan C++23",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "address" } },
+
+    { "name": "ubsan-20",   "inherits": "std20", "displayName": "UBSan C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "undefined" } },
+    { "name": "ubsan-23",   "inherits": "std23", "displayName": "UBSan C++23",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "undefined" } },
+
+    { "name": "tsan-20",    "inherits": "std20", "displayName": "TSan C++20 (Phase 5+)",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "thread" } },
+    { "name": "tsan-23",    "inherits": "std23", "displayName": "TSan C++23 (Phase 5+)",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug",          "CR_SANITIZER": "thread" } },
+
+    { "name": "release-20", "inherits": "std20", "displayName": "Release C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "CR_SANITIZER": "none" } },
+    { "name": "release-23", "inherits": "std23", "displayName": "Release C++23",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "CR_SANITIZER": "none" } }
+  ],
+
+  "buildPresets": [
+    { "name": "debug-20",   "configurePreset": "debug-20" },
+    { "name": "debug-23",   "configurePreset": "debug-23" },
+    { "name": "asan-20",    "configurePreset": "asan-20" },
+    { "name": "asan-23",    "configurePreset": "asan-23" },
+    { "name": "ubsan-20",   "configurePreset": "ubsan-20" },
+    { "name": "ubsan-23",   "configurePreset": "ubsan-23" },
+    { "name": "tsan-20",    "configurePreset": "tsan-20" },
+    { "name": "tsan-23",    "configurePreset": "tsan-23" },
+    { "name": "release-20", "configurePreset": "release-20" },
+    { "name": "release-23", "configurePreset": "release-23" }
+  ],
+
+  "testPresets": [
+    { "name": "debug-20",   "configurePreset": "debug-20",   "output": { "outputOnFailure": true } },
+    { "name": "debug-23",   "configurePreset": "debug-23",   "output": { "outputOnFailure": true } },
+    { "name": "asan-20",    "configurePreset": "asan-20",    "output": { "outputOnFailure": true } },
+    { "name": "asan-23",    "configurePreset": "asan-23",    "output": { "outputOnFailure": true } },
+    { "name": "ubsan-20",   "configurePreset": "ubsan-20",   "output": { "outputOnFailure": true } },
+    { "name": "ubsan-23",   "configurePreset": "ubsan-23",   "output": { "outputOnFailure": true } },
+    { "name": "tsan-20",    "configurePreset": "tsan-20",    "output": { "outputOnFailure": true } },
+    { "name": "tsan-23",    "configurePreset": "tsan-23",    "output": { "outputOnFailure": true } },
+    { "name": "release-20", "configurePreset": "release-20", "output": { "outputOnFailure": true } },
+    { "name": "release-23", "configurePreset": "release-23", "output": { "outputOnFailure": true } }
+  ]
+}

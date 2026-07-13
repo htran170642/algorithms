@@ -1,0 +1,58 @@
+# Mechanizes the CLAUDE.md "Coding Style" section.
+#
+# That section is a list of preferences, and preferences decay over 14 months.
+# Here each one becomes a check that fails the gate instead.
+#
+#   const correctness            -> misc-const-correctness, readability-const-return-type
+#   smart pointers over raw      -> cppcoreguidelines-owning-memory, -no-malloc
+#   RAII / Rule of 0-3-5         -> cppcoreguidelines-special-member-functions
+#   noexcept when appropriate    -> performance-noexcept-move-constructor
+#   STL algorithms over loops    -> modernize-loop-convert
+#   expressive names             -> readability-identifier-naming
+#   avoid outdated C++           -> modernize-*
+
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -misc-non-private-member-variables-in-classes
+
+WarningsAsErrors: >
+  misc-const-correctness,
+  cppcoreguidelines-special-member-functions,
+  cppcoreguidelines-owning-memory,
+  performance-noexcept-move-constructor,
+  modernize-use-nullptr,
+  modernize-use-override,
+  bugprone-use-after-move
+
+HeaderFilterRegex: '(phase0[0-9]|challenges|bench)/.*'
+
+CheckOptions:
+  - key:   readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key:   readability-identifier-naming.StructCase
+    value: CamelCase
+  - key:   readability-identifier-naming.FunctionCase
+    value: camelBack
+  - key:   readability-identifier-naming.VariableCase
+    value: lower_case
+  - key:   readability-identifier-naming.PrivateMemberSuffix
+    value: '_'
+  - key:   readability-identifier-naming.ConstantCase
+    value: lower_case
+  - key:   readability-identifier-length.MinimumVariableNameLength
+    value: 2
+
+# NOTE: the sanitizer/allocator weeks (Phase 4) and the lock-free weeks (Phase 5)
+# legitimately need raw memory and reinterpret_cast. Suppress locally with
+# NOLINT(<check>) and a one-line reason — never by loosening this file.
