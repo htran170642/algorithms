@@ -140,6 +140,37 @@ Gợi ý cấu trúc:
 
 **Trả lời:**
 
+`{}` **cho** mình 3 thứ:
+- cấm narrowing conversion
+- tránh most vexing parse
+- dùng được cho aggregate init
+
+`{}` **lấy đi** của mình 1 thứ:
+- nó **cướp quyền** cho `initializer_list` ctor — mọi ctor khác không được xét
+
+> ⚠️ Ghi nhớ: "ưu tiên `initializer_list`" **KHÔNG phải ưu điểm của `{}`**.
+> Nó chính là **cái bẫy**. Đó là lý do duy nhất khiến `{}` nguy hiểm.
+
+**Quy tắc dùng hàng ngày:**
+
+> Mặc định dùng `{}`.
+> Chuyển sang `()` **chỉ khi** type có `initializer_list` ctor **VÀ** mình muốn gọi
+> một constructor **khác**.
+
+Chú ý chữ **VÀ**, không phải **HOẶC**. `vector` *luôn* có init-list ctor, nhưng phần
+lớn thời gian `{}` vẫn đúng ý mình:
+
+```cpp
+std::vector<int> v{1, 2, 3};   // {} đúng là thứ mình cần
+std::vector<int> v(3);         // chỉ LÚC NÀY mới cần ()
+```
+
+**Câu trả lời phỏng vấn (đọc thành lời):**
+
+*"Tôi ưu tiên list initialization vì nó ngăn narrowing conversion và tránh most vexing
+parse. Nhưng tôi chuyển sang ngoặc tròn khi type có `initializer_list` constructor mà
+tôi lại cần một overload khác — điển hình là `std::vector`, nơi `v{3}` cho một phần tử
+mang giá trị 3, còn `v(3)` mới cho ba phần tử."*
 
 
 
