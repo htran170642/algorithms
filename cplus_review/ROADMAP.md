@@ -42,7 +42,7 @@
 
 > *"Master every topic before continuing."*
 
-- [ ] **W1 — Value categories.** Build `Probe` (logs every ctor/copy/move/dtor). Predict-then-verify: lvalue / xvalue / prvalue. *Reused all year.*
+- [x] **W1 — Value categories.** Build `Probe` (logs every ctor/copy/move/dtor). Predict-then-verify: lvalue / xvalue / prvalue. *Reused all year.*
 - [ ] **W2 — Constructors & initialization.** default/copy/move/converting/`explicit`/delegating/inheriting · aggregate init · `initializer_list` traps · designated initializers
 - [ ] **W3 — Rule of 0/3/5 · RAII.** `ScopedFile`, `UniqueHandle` · `noexcept` · exception-safety guarantees (basic/strong/nothrow)
 - [ ] **W4 — Move semantics.** `std::move` · moved-from state · move-only types · when moves silently become copies. *Vehicle: build `String` with SSO.*
