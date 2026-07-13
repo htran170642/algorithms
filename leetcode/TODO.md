@@ -128,8 +128,8 @@
 - [x] LC 153 - Find Minimum in Rotated Sorted Array
 - [x] LC 875 - Koko Eating Bananas
 - [x] LC 1011 - Capacity To Ship Packages Within D Days
-- [] LC 1482 - Minimum number of days to make m bouquests
-- [] LC 2187 - 
+- [x] LC 1482 - Minimum number of days to make m bouquests
+- [ ] LC 2187 - Minimum time to complete trip
 - [ ] LC 410 - Split Array Largest Sum
 
 ## Review
@@ -163,6 +163,7 @@
 - [ ] LC 2 - Add Two Numbers
 - [ ] LC 138 - Copy List With Random Pointer
 - [ ] LC 23 - Merge K Sorted Lists
+- [ ] LC 146 - LRU cache
 
 ---
 
