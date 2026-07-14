@@ -73,15 +73,31 @@ khi có exception.
 
 ---
 
-## 3. Vì sao `ScopedFile` phải move-only? — **TỰ VIẾT**
+## 3. Vì sao `ScopedFile` phải move-only?
 
-Gợi ý: `FILE*` có bao nhiêu chủ sở hữu? Cho copy thì hai object cùng tin gì?
-Chuyện gì xảy ra khi cả hai ra khỏi scope?
+**Vì `FILE*` có đúng MỘT chủ sở hữu.**
 
-**Trả lời:**
+Nếu cho phép copy, hai object sẽ cùng giữ **một con trỏ**, và cả hai đều *tin rằng*
+mình có trách nhiệm `fclose()` nó. Khi cả hai ra khỏi scope:
 
+> **`fclose()` hai lần trên cùng một `FILE*` → double free → undefined behavior.**
 
+Thường là crash. Đôi khi tệ hơn: file descriptor đó đã được OS **cấp lại cho người
+khác**, và bạn vừa đóng file của họ — một bug gần như không thể lần ra.
 
+Nên:
+```cpp
+ScopedFile(const ScopedFile&)            = delete;   // chặn ở compile time
+ScopedFile& operator=(const ScopedFile&) = delete;
+
+ScopedFile(ScopedFile&& other) noexcept
+    : f_(std::exchange(other.f_, nullptr)) {}        // chuyển quyền: chủ cũ mất quyền
+```
+
+`std::exchange` bỏ lại `nullptr` cho `other` → `other` không còn là chủ → destructor
+của nó thấy `nullptr` và **không đóng gì cả**. Không thể double-close.
+
+> **Move-only = độc quyền sở hữu.**
 
 Cùng mô hình này: `unique_ptr`, `std::thread`, `std::fstream`, `lock_guard`.
 Sẽ tự viết lại ở **W19**.
@@ -143,13 +159,28 @@ nguyên, vẫn lùi được.
 
 ---
 
-## 7. Vì sao destructor không bao giờ được ném? — **TỰ VIẾT**
+## 7. Vì sao destructor không bao giờ được ném?
 
-Gợi ý: destructor đang chạy **trong lúc stack unwinding** ⇒ đã có **một** exception
-đang bay. Nếu nó ném thêm **cái thứ hai** — C++ chở được mấy exception cùng lúc?
+Bối cảnh: một exception **đang bay**, stack đang **unwind**, và C++ đang lần lượt gọi
+destructor của từng object trên đường đi.
 
-**Trả lời:**
+Bây giờ một destructor **ném thêm exception thứ hai**.
 
+Giờ có **hai exception cùng lúc**. Và C++ **không có cơ chế nào để chở hai exception
+song song** — một `throw` chỉ mang được một. Không thể chọn cái nào thắng. Không thể
+gộp. Không thể hoãn.
+
+Nên chuẩn chọn phương án dứt khoát nhất:
+
+> ### `std::terminate()` — giết process ngay lập tức.
+
+Không unwind tiếp. Không `catch`. Không cứu. **Chương trình chết.**
+
+Vì thế từ **C++11**, destructor **mặc định là `noexcept`** — không cần viết. Và nếu cố
+ném từ destructor, nó vẫn gọi `terminate()`.
+
+Đó là lý do `ScopedFile::close()` được đánh dấu `noexcept` và **cố tình nuốt** lỗi của
+`fclose()`.
 
 
 
