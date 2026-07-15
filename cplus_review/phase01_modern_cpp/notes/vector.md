@@ -101,8 +101,23 @@ Viết 3–4 câu nối 5 tuần thành một mạch. Gợi ý các mốc:
 
 **Trả lời:**
 
+Năm tuần đầu là **một** câu chuyện, không phải năm bài rời:
 
+- **W1** — mình *đo* được: khi move constructor thiếu `noexcept`, `std::vector`
+  **copy** thay vì move lúc realloc. Lúc đó chưa hiểu tại sao.
+- **W3** — hiểu *vì sao*: `vector` nợ một **strong exception guarantee** khi realloc.
+  Move mà ném giữa chừng thì buffer cũ đã bị rút ruột, không lùi được → nên nó thà
+  copy còn hơn.
+- **W4** — thấy cách *đạt* strong guarantee: **copy-and-swap** chỉ đụng vào dữ liệu
+  của mình **sau khi** bản sao mới đã dựng xong; nếu dựng thất bại thì mình chưa hề
+  bị đụng tới.
+- **W5** — viết chính **dòng ra quyết định**: `std::move_if_noexcept(data_[i])` trong
+  `reserve()`. Nó trả `T&&` nếu move của `T` là `noexcept` (→ move), ngược lại trả
+  `const T&` (→ copy). Hai type khác đúng một keyword → `copies=0` vs `copies=1` trên
+  cùng một realloc.
 
+Nói gọn: **một chữ `noexcept` trên move ctor quyết định `std::vector` move hay copy
+khi nó lớn lên — vì đó là cách duy nhất nó giữ được lời hứa strong-exception-safe.**
 
 ---
 
