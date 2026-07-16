@@ -7,5 +7,6 @@ cr_add_test(phase01_modern_cpp_test SOURCES
   tests/string_test.cpp         # W4 — move semantics, SSO, copy-and-swap
   tests/vector_test.cpp         # W5 — placement new, growth, move_if_noexcept
   tests/forwarding_test.cpp     # W6 — perfect forwarding, reference collapsing
+  tests/virtual_test.cpp        # W7 — virtual functions, slicing, NVI
 )
 target_include_directories(phase01_modern_cpp_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
