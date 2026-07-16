@@ -172,11 +172,123 @@ Tóm tắt 3 cách đa hình gãy, mỗi cái 1–2 câu, kèm cách phòng:
 
 ---
 
-## 7. Câu hỏi phỏng vấn tiếp theo
+## 7. Câu hỏi phỏng vấn — có đáp án
 
-- Gọi hàm `virtual` **trong constructor** thì sao? *(gợi ý: lúc đó vptr đang trỏ vào
-  vtable của class nào? Đây là câu hỏi ưa thích của Bloomberg)*
-- `final` giúp compiler **devirtualize** thế nào? Đo được không?
-- Vì sao vtable có **2 destructor**? Khác nhau chỗ nào?
-- `dynamic_cast` hoạt động ra sao — dựa vào ô nào trong vtable? Vì sao nó chậm?
-- Khi nào **KHÔNG** nên dùng virtual? *(gợi ý: CRTP ở W25, `std::variant` ở W17)*
+### 7.1 Gọi hàm `virtual` trong constructor? *(câu ruột của Bloomberg)*
+
+**Đa hình KHÔNG hoạt động.** Đo được:
+
+```
+Derived d;
+  Base()    goi speak() -> "Base"                 ← KHONG phai "Derived"!
+  Derived() goi speak() -> "Derived-da-san-sang"
+sau khi dung xong: d.speak() -> "Derived-da-san-sang"
+```
+
+**Vì sao:** object được dựng **từ base lên**. Khi `Base()` đang chạy, phần `Derived`
+**chưa tồn tại** — `msg_` chưa được khởi tạo. Nếu `speak()` gọi được `Derived::speak()`
+thì nó sẽ đọc `msg_` khi biến này còn là **rác**.
+
+Nên chuẩn C++ quy định: **`vptr` được cập nhật theo từng tầng.** Vào `Base()` thì vptr
+trỏ vào **vtable của Base**; `Base()` xong, vptr được trỏ lại **vtable của Derived**
+rồi `Derived()` mới chạy.
+
+> Trong constructor/destructor của X, kiểu động của object **CHÍNH LÀ X** — không phải
+> class dẫn xuất. Đa hình bị "tắt" có chủ đích, để bảo vệ bạn khỏi đọc member chưa
+> khởi tạo.
+
+**Destructor thì ngược lại** — huỷ từ dẫn xuất xuống base, nên trong `~Base()` thì
+`Derived` **đã bị huỷ rồi** → vptr lại trỏ về Base. Cùng một lý do.
+
+**Nguy hiểm hơn:** gọi hàm **pure virtual** trong constructor →
+`pure virtual method called` → `std::terminate()`. Chương trình chết.
+
+**Cách làm đúng:** hàm khởi tạo hai pha (`create()` gọi ctor rồi gọi `init()`), hoặc
+truyền dữ liệu qua tham số ctor thay vì gọi hook ảo.
+
+### 7.2 `final` giúp devirtualize thế nào?
+
+`final` nói với compiler: **"không còn class nào override nữa."**
+
+```cpp
+struct Circle final : Shape { double area() const override; };
+
+Circle c;
+c.area();          // compiler BIẾT chắc là Circle::area -> gọi thẳng, có thể INLINE
+Shape* p = &c;
+p->area();         // vẫn phải qua vtable... TRỪ KHI compiler chứng minh được p là Circle
+```
+
+Không có `final`, khi thấy `Shape* p` compiler **buộc** phải qua vtable — biết đâu có
+`Square` nào đó. Có `final` trên `Circle`, nếu compiler suy ra được kiểu động là
+`Circle` thì nó **bỏ hẳn** lời gọi gián tiếp và **inline** thẳng.
+
+**Đo được:** so asm ở `-O2` với/không `final` trên Godbolt, hoặc benchmark
+(→ **W25**, khi so CRTP với virtual dispatch).
+
+Lợi ích thật không nằm ở việc bỏ 1 lần dereference — mà ở chỗ **inline mở đường cho
+mọi tối ưu khác**. Virtual call là một **hàng rào chặn tối ưu**.
+
+### 7.3 Vì sao vtable có 2 destructor?
+
+```
+16   Circle::~Circle      ← complete object destructor  (D1)
+24   Circle::~Circle      ← deleting destructor         (D0)
+```
+
+- **D1 (complete)**: chỉ huỷ member + base. Dùng khi object trên **stack** ra khỏi
+  scope, hoặc khi nó là member của object khác.
+- **D0 (deleting)**: huỷ **rồi gọi `operator delete`** để trả bộ nhớ. Dùng cho
+  `delete p`.
+
+Cần cả hai vì `delete p` phải giải phóng bộ nhớ, còn object trên stack thì **không được
+phép** — bộ nhớ đó không phải của heap. Compiler không biết trước bạn sẽ dùng cách nào,
+nên nó sinh cả hai và để vtable chọn lúc chạy.
+
+*(Chi tiết Itanium ABI: còn có D2 — base object destructor — dùng cho virtual
+inheritance. → W8)*
+
+### 7.4 `dynamic_cast` hoạt động ra sao? Vì sao chậm?
+
+Nhớ vtable dump chứ:
+```
+ 0   (int (*)(...))0          ← offset-to-top
+ 8   & _ZTI6Circle            ← con trỏ TYPEINFO   ← dynamic_cast dùng ô này
+16   Circle::~Circle          ← vptr trỏ vào ĐÂY
+```
+
+`vptr` trỏ vào offset 16, nên **typeinfo nằm ở `vptr[-1]`** và **offset-to-top ở
+`vptr[-2]`** — địa chỉ **âm**.
+
+`dynamic_cast<Derived*>(base_ptr)` làm:
+1. lấy `vptr` từ object
+2. đọc `vptr[-1]` → con trỏ `std::type_info`
+3. **duyệt cây kế thừa lúc chạy**, so sánh tên kiểu (strcmp!) để tìm đường
+4. nếu tìm thấy → cộng offset để chỉnh con trỏ; không → trả `nullptr`
+
+**Vì sao chậm:** bước 3 là một **thuật toán duyệt đồ thị**, không phải một phép so
+sánh. Với đa kế thừa nó phải dò nhiều nhánh. libstdc++ còn dùng `strcmp` trên tên kiểu
+khi qua ranh giới shared library. Chậm hơn virtual call **hàng chục lần**.
+
+> `dynamic_cast` nhiều trong hot path = code smell. Thường nghĩa là bạn **đang thiếu
+> một hàm virtual** — hoặc nên dùng `std::variant` + `visit` (W17).
+
+### 7.5 Khi nào KHÔNG dùng virtual?
+
+| Tình huống | Dùng gì thay thế |
+|---|---|
+| Tập kiểu **đóng**, biết trước hết | **`std::variant` + `visit`** (W17) — dispatch lúc biên dịch, không vptr |
+| Cần hiệu năng, đa hình **tĩnh** | **CRTP** (W25) — inline được hoàn toàn |
+| Chỉ cần một hành vi thay đổi | **`std::function`** hoặc lambda — đơn giản hơn cả cây kế thừa |
+| Object nhỏ, số lượng cực lớn | **không dùng gì** — +8 byte/object và cache miss giết bạn |
+| Chỉ để "cho linh hoạt sau này" | **YAGNI** — virtual là chi phí *có thật*, linh hoạt là lợi ích *giả định* |
+
+**Chi phí thật của virtual:**
+1. **+8 byte** mỗi object (đo được: 4 → 16)
+2. **+1 dereference** mỗi lời gọi
+3. **chặn inline** ← đắt nhất, vì nó chặn *mọi* tối ưu khác
+4. **phá cache** — vtable là một lần chạm bộ nhớ nữa
+5. buộc phải cấp phát heap (`unique_ptr<Base>`) thay vì để trên stack
+
+> Dùng virtual khi bạn **thật sự cần** tập kiểu **mở** (plugin, kiểu do người dùng thêm
+> vào). Còn tập kiểu **đóng** thì `variant` gần như luôn nhanh hơn và an toàn hơn.
