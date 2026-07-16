@@ -47,7 +47,7 @@
 - [x] **W3 — Rule of 0/3/5 · RAII.** `ScopedFile`, `UniqueHandle` · `noexcept` · exception-safety guarantees (basic/strong/nothrow)
 - [x] **W4 — Move semantics.** `std::move` · moved-from state · move-only types · when moves silently become copies. *Vehicle: build `String` with SSO.*
 - [x] **W5 — Build `Vector`.** placement new · geometric growth · `emplace_back` · `move_if_noexcept`
-- [ ] **W6 — Perfect forwarding.** build `make_unique`, `invoke`, a forwarding factory · reference collapsing
+- [x] **W6 — Perfect forwarding.** build `make_unique`, `invoke`, a forwarding factory · reference collapsing
 - [ ] **W7 — Virtual functions & destructors.** dynamic dispatch · virtual dtor · slicing · `override`/`final` · devirtualization · NVI
 - [ ] **W8 — Object model & layout.** vtable/vptr via `-fdump-lang-class` · `sizeof` of polymorphic types · multiple + virtual inheritance · ABI basics
 - [ ] **W9 — Object lifetime & UB.** dangling refs · temporary lifetime extension · `[[nodiscard]]` · UBSAN hunt
