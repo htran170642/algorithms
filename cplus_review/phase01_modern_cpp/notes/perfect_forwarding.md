@@ -133,10 +133,103 @@ Một hàm. Mọi tổ hợp. Đó là lý do perfect forwarding tồn tại.
 
 ---
 
-## 7. Câu hỏi phỏng vấn tiếp theo
+## 7. Câu hỏi phỏng vấn — có đáp án
 
-- `auto&& x = ...;` có phải forwarding reference không? Còn `const T&&`? Còn `T&&` khi
-  `T` là template param của **class** (không phải hàm)?
-- `vector<T>::push_back(T&&)` — có phải forwarding reference không? *(Không! Vì sao?)*
-- Vì sao `emplace_back` nhanh hơn `push_back`? (dùng `Probe` để đo — W5 đã có sẵn)
-- `std::forward` gọi **hai lần** trên cùng một biến thì sao? *(bug: cướp hai lần)*
+### 7.1 Cái nào thật sự là forwarding reference?
+
+Điều kiện **đủ và cần**: phải là **`T&&`** với `T` là template param **đang được suy
+luận ngay tại đó**. Chỉ cần lệch một chút là hỏng:
+
+| Viết | Là forwarding ref? | Vì sao |
+|---|---|---|
+| `template<class T> void f(T&& x)` | ✅ | đúng dạng, `T` suy luận tại đây |
+| `auto&& x = expr;` | ✅ | `auto` suy luận **y hệt** template param |
+| `template<class T> void f(const T&& x)` | ❌ | có `const` → **không** còn dạng thuần `T&&` → rvalue ref thật |
+| `template<class T> void f(std::vector<T>&& v)` | ❌ | `T` suy từ *bên trong* `vector<T>`, không phải từ `T&&` |
+| `template<class T> void f(T&& x)` **nhưng gọi** `f<int>(...)` | ❌ | chỉ định tường minh → không suy luận nữa |
+
+**`T&&` trong class template — KHÔNG phải forwarding reference:**
+
+```cpp
+template <typename T>
+class Vector {
+    void push_back(T&& v);      // ❌ T đã CỐ ĐỊNH lúc khai báo Vector<int>
+                                //    -> đây là int&&, rvalue ref thật
+
+    template <typename U>
+    void emplace_back(U&& u);   // ✅ U suy luận tại LỜI GỌI -> forwarding ref
+};
+```
+
+> **Mấu chốt:** `T` của class được ấn định khi bạn viết `Vector<int>`. Tới lúc gọi
+> `push_back` thì **chẳng còn gì để suy luận** — `T&&` là `int&&`, cứng. Muốn có
+> forwarding reference thì **method phải có template param RIÊNG** của nó (`U`).
+
+### 7.2 `vector<T>::push_back(T&&)` — vì sao không phải forwarding reference?
+
+Đúng như trên: `T` thuộc về **class**, không thuộc method. Với `vector<string>`:
+
+```cpp
+void push_back(const string& v);   // overload 1 — nhận lvalue -> copy
+void push_back(string&& v);        // overload 2 — nhận rvalue -> move
+```
+
+Hai overload **viết tay**, không phải forwarding. Đây chính là bài toán 2ⁿ mà
+`std::vector` chấp nhận trả giá — vì `push_back` chỉ có **1 tham số** nên 2¹ = 2
+overload, chịu được.
+
+Còn `emplace_back(Args&&...)` thì **là** forwarding reference thật, vì `Args` là
+template param riêng của method.
+
+### 7.3 Vì sao `emplace_back` nhanh hơn `push_back`?
+
+```cpp
+std::vector<std::string> v;
+
+v.push_back(std::string(10, 'x'));   // 1. dựng temporary
+                                     // 2. MOVE temporary vào slot
+                                     // 3. huỷ temporary
+v.emplace_back(10, 'x');             // dựng THẲNG trong slot. Hết.
+```
+
+`emplace_back` forward `10` và `'x'` **nguyên vẹn** tới placement new, rồi
+`::new (&data_[i]) std::string(10, 'x')` construct **ngay tại chỗ**. Không temporary,
+không move, không dtor thừa.
+
+> `push_back` = "dựng ở ngoài rồi mang vào". `emplace_back` = "dựng luôn ở trong".
+
+**Nhưng đừng lạm dụng** — `emplace_back` **bỏ qua explicit**:
+```cpp
+std::vector<Timeout> v;
+v.emplace_back(30);   // COMPILE! Dù Timeout(int) là explicit (W2!)
+v.push_back(30);      // lỗi biên dịch — đúng như mong muốn
+```
+`emplace_back` dùng **direct-initialization** (`T(args...)`), mà direct-init thì
+explicit constructor **vẫn được gọi**. Nó vừa nhanh hơn vừa **kém an toàn hơn**.
+Đây là trade-off ít người biết.
+
+### 7.4 `forward` hai lần trên cùng một biến?
+
+```cpp
+template <typename T>
+void bad(T&& x) {
+    sink1(std::forward<T>(x));   // nếu T là rvalue -> x bị RÚT RUỘT ở đây
+    sink2(std::forward<T>(x));   // ...rồi forward CÁI XÁC sang sink2
+}
+```
+
+**Bug.** Với rvalue, `forward` lần đầu cho phép `sink1` cướp nội dung của `x`. Lần thứ
+hai forward một object đã ở trạng thái *moved-from* — `sink2` nhận rác.
+
+Không phải UB (moved-from là *valid but unspecified*), nhưng là **bug logic**, và
+**không compiler nào cảnh báo**. `.clang-tidy` của Week 0 có `bugprone-use-after-move`
+bắt được các ca đơn giản.
+
+> **Quy tắc:** `forward` (và `move`) là thao tác **một lần duy nhất** trên một biến.
+> Nó có nghĩa "tao xong với mày rồi".
+
+Muốn đưa cho nhiều nơi? → forward cho **cái cuối cùng** thôi:
+```cpp
+sink1(x);                      // lvalue -> copy
+sink2(std::forward<T>(x));     // cái cuối mới được cướp
+```
