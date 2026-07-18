@@ -155,11 +155,11 @@
 
 ## Problems
 
-- [ ] LC 206 - Reverse Linked List
-- [ ] LC 21 - Merge Two Sorted Lists
-- [ ] LC 141 - Linked List Cycle
-- [ ] LC 19 - Remove Nth Node From End
-- [ ] LC 143 - Reorder List
+- [x] LC 206 - Reverse Linked List
+- [x] LC 21 - Merge Two Sorted Lists
+- [x] LC 141 - Linked List Cycle
+- [x] LC 19 - Remove Nth Node From End
+- [x] LC 143 - Reorder List
 - [ ] LC 2 - Add Two Numbers
 - [ ] LC 138 - Copy List With Random Pointer
 - [ ] LC 23 - Merge K Sorted Lists
