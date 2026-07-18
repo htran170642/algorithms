@@ -8,8 +8,13 @@
 namespace {
 
 // ============================================== constexpr: may run at compile time
-constexpr int factorial(int n) {
-    int result = 1;
+// Return type is `long`, not `int`, on purpose: int factorial overflows at n==13
+// (13! = 6'227'020'800 > INT_MAX). Signed overflow is UB, so as a constexpr it
+// would be a hard compile error, and at runtime the ubsan preset would abort —
+// the same UB scratch.cpp demonstrates. `long` buys headroom to ~20!. A constexpr
+// function cannot hide UB: that's a feature, not a limitation.
+constexpr long factorial(int n) {
+    long result = 1;
     for (int i = 2; i <= n; ++i) {
         result *= i;
     }
@@ -17,7 +22,7 @@ constexpr int factorial(int n) {
 }
 
 // consteval: MUST run at compile time
-consteval int factorialForced(int n) {
+consteval long factorialForced(int n) {
     return factorial(n);
 }
 
