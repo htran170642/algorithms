@@ -10,5 +10,6 @@ cr_add_test(phase01_modern_cpp_test SOURCES
   tests/virtual_test.cpp        # W7 — virtual functions, slicing, NVI
   tests/object_model_test.cpp   # W8 — multiple/virtual inheritance, EBO
   tests/lifetime_test.cpp       # W9 — object lifetime, dangling, [[nodiscard]]
+  tests/constexpr_test.cpp      # W10 — constexpr/consteval/constinit, concepts
 )
 target_include_directories(phase01_modern_cpp_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
