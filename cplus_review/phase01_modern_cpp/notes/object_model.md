@@ -114,12 +114,86 @@ Giải thích: vì sao object rỗng cần `sizeof >= 1`? Vì sao khi làm **bas
 
 ---
 
-## 6. Câu hỏi phỏng vấn tiếp theo
+## 6. Câu hỏi phỏng vấn — có đáp án
 
-- `[[no_unique_address]]` (C++20) — nó làm EBO hoạt động cho **member** thế nào? Đo
-  `sizeof(HasEmptyMember)` với attribute này.
-- Vì sao `static_cast` xuống (downcast) không cần RTTI mà `dynamic_cast` thì cần?
-- Trong đa kế thừa, `delete` một `B*` (base thứ hai) — làm sao runtime tìm lại đầu
-  object để `operator delete`? *(gợi ý: offset-to-top)*
-- `reinterpret_cast<B*>(&c)` thay vì `static_cast` — hỏng thế nào, và khi nào crash?
-- Vì sao thứ tự khai báo member ảnh hưởng `sizeof`? (→ W27, struct packing)
+### 6.1 `[[no_unique_address]]` (C++20) — EBO cho member
+
+EBO chỉ tự động áp dụng cho **base**, không cho **member**. Attribute này mở khoá EBO
+cho member. Đo được:
+
+```
+struct Plain     {                          Empty e; int x; };  → sizeof 8
+struct Optimized { [[no_unique_address]]    Empty e; int x; };  → sizeof 4
+```
+
+`e` không còn chiếm byte riêng — nó **chồng lên** cùng địa chỉ với `x` (vì nó rỗng,
+không có gì để đè lên nhau). Đây là cách hiện đại để có EBO **mà không cần** trick kế
+thừa base rỗng.
+
+> Ứng dụng thật: `std::vector<T, Alloc>` với allocator rỗng (mặc định), hoặc lambda
+> làm comparator trong `std::map` — không phình object thêm byte nào.
+
+### 6.2 Vì sao downcast `static_cast` không cần RTTI, `dynamic_cast` thì cần?
+
+- **`static_cast<Derived*>(base_ptr)`** — offset điều chỉnh là **hằng số biết lúc biên
+  dịch** (compiler biết chính xác `Derived` layout ra sao). Nó chỉ cộng/trừ một số cố
+  định. **Không kiểm tra gì lúc chạy** — nếu con trỏ thật ra không phải `Derived`, đó
+  là **UB im lặng**, không ai báo.
+
+- **`dynamic_cast<Derived*>(base_ptr)`** — phải **kiểm tra lúc chạy** xem object thật
+  có đúng là `Derived` không, vì nó có thể là bất kỳ lớp con nào. Kiểm tra đó cần đọc
+  `type_info` từ vtable → cần **RTTI**. Trả `nullptr`/ném nếu sai.
+
+> `static_cast` = "tao TIN mày đúng kiểu, cộng offset là xong". `dynamic_cast` = "để
+> tao KIỂM TRA đã". Nhanh vs an toàn.
+
+Hệ quả: `dynamic_cast` **chỉ chạy được trên polymorphic type** (có ít nhất 1 virtual).
+`static_cast` chạy trên mọi type.
+
+### 6.3 `delete` một `B*` (base thứ hai) — runtime tìm lại đầu object thế nào?
+
+Nhớ W8: `(B*)&c` **lệch 16 byte** so với đầu object. Nhưng `operator delete` cần con
+trỏ **đầu object thật** (chỗ `malloc`/`new` trả về) — không phải con trỏ đã dịch.
+
+Cơ chế: `~B()` là **virtual**, nên `delete pb` đi qua vtable của B. Trong vtable đó có
+ô **`offset-to-top`** = "-16" — lùi 16 byte để về đầu object. Runtime:
+1. gọi deleting destructor qua vtable
+2. đọc `offset-to-top`, cộng vào `pb` → ra con trỏ gốc
+3. `operator delete(con-trỏ-gốc)`
+
+> Đây chính là công dụng của cái ô `offset-to-top` bí ẩn trong vtable dump ở W7.
+> **Và** là lý do `delete` qua base pointer **bắt buộc** destructor phải virtual trong
+> đa kế thừa — không có nó, runtime không tìm lại được đầu object → free sai địa chỉ.
+
+### 6.4 `reinterpret_cast<B*>(&c)` — hỏng thế nào?
+
+```cpp
+C c;
+B* good = static_cast<B*>(&c);        // = &c + 16  (đúng)
+B* bad  = reinterpret_cast<B*>(&c);   // = &c       (SAI — không cộng offset)
+```
+
+`reinterpret_cast` **chỉ đổi cách nhìn con trỏ, không đổi giá trị**. Nên `bad` trỏ vào
+đầu object (phần A), rồi bị *diễn giải* như thể đó là một `B`.
+
+- `bad->fb()` → đọc vptr ở đầu object = **vptr của A** → gọi nhầm hàm, hoặc nhảy vào
+  địa chỉ rác → **crash hoặc còn tệ hơn**.
+- `bad->b` → đọc `A::a` (hoặc padding) tưởng là `B::b` → dữ liệu sai im lặng.
+
+> Với single inheritance offset thường = 0 nên `reinterpret_cast` "may mà chạy" —
+> chính điều đó khiến người ta tưởng nó an toàn, rồi chết khi chuyển sang đa kế thừa.
+> **Không bao giờ `reinterpret_cast` giữa các kiểu có quan hệ kế thừa.**
+
+### 6.5 Vì sao thứ tự member ảnh hưởng `sizeof`?
+
+```cpp
+struct Bad  { char a; int b; char c; };   // sizeof 12
+struct Good { int b; char a; char c; };   // sizeof 8
+```
+
+Mỗi type có yêu cầu **alignment**: `int` phải nằm ở địa chỉ chia hết cho 4. `Bad` xếp
+`char a`(1) rồi phải **độn 3 byte** để `int b` căn lề, rồi `char c`(1) + độn 3 → 12.
+`Good` gom `int` lên đầu, hai `char` liền nhau ở cuối → chỉ độn 2 → 8.
+
+> **Xếp member từ LỚN tới NHỎ** thường cho object nhỏ nhất. Chi tiết đầy đủ ở **W27**
+> (struct packing, cache locality) — đây là bản xem trước.
