@@ -7,7 +7,7 @@
 ## Progress
 
 - [x] Week 0: Production Substrate
-- [ ] Phase 1: Modern C++ (W1–W10)
+- [x] Phase 1: Modern C++ (W1–W10)
 - [ ] Phase 2: STL Deep Dive (W11–W20)
 - [ ] Phase 3: Templates (W21–W26)
 - [ ] Phase 4: Memory Management (W27–W31)
@@ -51,7 +51,7 @@
 - [x] **W7 — Virtual functions & destructors.** dynamic dispatch · virtual dtor · slicing · `override`/`final` · devirtualization · NVI
 - [x] **W8 — Object model & layout.** vtable/vptr via `-fdump-lang-class` · `sizeof` of polymorphic types · multiple + virtual inheritance · ABI basics
 - [ ] **W9 — Object lifetime & UB.** dangling refs · temporary lifetime extension · `[[nodiscard]]` · UBSAN hunt
-- [ ] **W10 — `constexpr`/`consteval`/`constinit`**, concepts intro, modules *overview only*. → **Mock #1** + **Design round #1**
+- [x] **W10 — `constexpr`/`consteval`/`constinit`**, concepts intro, modules *overview only*. → **Mock #1** + **Design round #1**
 
 ---
 
