@@ -88,12 +88,64 @@ node bị xoá. Một nguyên tắc, ba kết luận.
 
 ---
 
-## 6. Câu hỏi phỏng vấn tiếp theo
+## 6. Câu hỏi phỏng vấn — có đáp án
 
-- `vector::reserve` vs `vector::resize` — khác gì? Cái nào tạo phần tử?
-- Vì sao `vector::shrink_to_fit` là *request*, không phải lệnh? Compiler/lib có thể
-  bỏ qua không?
-- `deque[i]` chậm hơn `vector[i]` bao nhiêu, và vì sao? (→ đo ở W13)
-- Vì sao `insert` vào giữa `vector` là O(n)? (dời phần tử) Còn `list` thì O(1)?
-- `std::vector<bool>` — vì sao `&v[0]` không cho ra `bool*`? (proxy, không phải
-  container thật — W11 đã nhắc)
+### 6.1 `reserve` vs `resize`
+
+Đo được:
+```
+reserve(5): size=0 capacity=5   ← chỉ XIN CHỖ, 0 phần tử
+resize(5):  size=5 capacity=5   ← TẠO 5 phần tử (giá trị 0)
+```
+
+- **`reserve(n)`** — cấp phát sẵn chỗ cho `n` phần tử, nhưng **size vẫn nguyên**. Không
+  construct gì. Mục đích: tránh realloc khi bạn biết trước sẽ push bao nhiêu.
+  `v[0]` sau `reserve` là **UB** (chưa có phần tử nào).
+- **`resize(n)`** — thực sự **tạo/xoá phần tử** để size == n. Phần tử mới được
+  value-init (0 với int). `v[0]` hợp lệ ngay.
+
+> Bẫy: `reserve` rồi `v[i] = x` là **UB** (ghi vào chỗ chưa có phần tử). Phải
+> `push_back`/`emplace_back`, hoặc dùng `resize` nếu muốn index trực tiếp.
+
+### 6.2 Vì sao `shrink_to_fit` chỉ là *request*
+
+Chuẩn nói `shrink_to_fit` là **non-binding request** — implementation **được phép bỏ
+qua**. Lý do: co buffer đòi hỏi cấp buffer mới nhỏ hơn + copy/move sang + free cũ —
+một thao tác **có thể ném** và **tốn kém**. Có thư viện chọn không làm nếu thấy không
+lợi. Muốn chắc chắn co: dùng thủ thuật `vector<T>(v).swap(v)` (tạo bản sao khít rồi
+swap) — nhưng cũng không tuyệt đối.
+
+### 6.3 `deque[i]` chậm hơn `vector[i]` vì sao
+
+- `vector[i]` = `*(data_ + i)` → **một phép cộng địa chỉ**, một lần chạm bộ nhớ.
+- `deque[i]` = tìm khối chứa `i` (chia/lấy dư để ra chỉ số khối), đọc **bảng con trỏ**
+  lấy địa chỉ khối, rồi mới index trong khối → **hai lần chạm bộ nhớ** + vài phép tính.
+
+Cả hai vẫn O(1), nhưng hằng số của deque lớn hơn, và **phá cache** (bảng khối + khối ở
+hai vùng nhớ khác nhau). Đo cụ thể ở **W13**.
+
+### 6.4 Vì sao `insert` giữa `vector` là O(n), `list` O(1)
+
+- `vector` liền kề → chèn vào giữa phải **dời tất cả phần tử phía sau** sang phải 1 ô
+  → O(n) phép move. (Áp dụng nguyên tắc vàng: dời phần tử → cũng invalidate iterator.)
+- `list` là node rời → chèn = **đổi vài con trỏ** (`prev`/`next` của 2 node lân cận),
+  không đụng phần tử khác → O(1)... **nhưng** phải *tìm* chỗ chèn trước đã, mà tìm trong
+  list là O(n) (đi bộ). Nên "list chèn O(1)" chỉ đúng khi bạn **đã có iterator** tới
+  chỗ đó. → cú twist của W13.
+
+### 6.5 `vector<bool>` — vì sao `&v[0]` không ra `bool*`
+
+`std::vector<bool>` **không lưu `bool`**. Nó nhồi **8 bool vào 1 byte** (mỗi bool = 1
+bit) để tiết kiệm 8 lần bộ nhớ. Nhưng C++ **không lấy được địa chỉ của một bit** — nên
+`v[i]` không trả về `bool&` thật, mà trả về một **proxy object** (`vector<bool>::reference`,
+đo được `sizeof == 16`) giả vờ là `bool&`.
+
+Hệ quả:
+```cpp
+bool* p = &v[0];        // KHÔNG biên dịch — &proxy không phải bool*
+auto&& r = v[0];        // r là proxy, không phải bool&
+```
+
+> `vector<bool>` là **lời nói dối kinh điển của STL**: nó mang tên container nhưng
+> không phải container đúng nghĩa (không thoả yêu cầu container chuẩn). Cần mảng bool
+> thật → dùng `std::vector<char>`, `std::deque<bool>`, hoặc `std::bitset<N>`.
