@@ -60,7 +60,7 @@
 > *Understand implementation, complexity, iterator invalidation, trade-offs.*
 
 - [x] **W11 — Iterators · `<algorithm>` · ranges.** iterator categories · write your own iterators · C++20 ranges/views/projections. *Enforces "STL algorithms over manual loops".*
-- [ ] **W12 — `vector` / `array` / `deque`.** Derive the **iterator-invalidation table from experiments**, not from memory.
+- [x] **W12 — `vector` / `array` / `deque`.** Derive the **iterator-invalidation table from experiments**, not from memory.
 - [ ] **W13 — `list` / `forward_list`.** Benchmark vs `vector` → discover why `list` is almost never the answer.
 - [ ] **W14 — Build a HashMap** (open addressing + chaining) → `unordered_map`/`unordered_set`. Then explain *why* `std::unordered_map` is slow.
 - [ ] **W15 — Build an RB or AVL tree** → `map` / `set` / `multimap`. Ordered vs unordered.
