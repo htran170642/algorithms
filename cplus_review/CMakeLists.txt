@@ -40,13 +40,14 @@ target_include_directories(cr_base INTERFACE ${CMAKE_SOURCE_DIR})
 target_compile_features(cr_base INTERFACE cxx_std_20)
 cr_enable_warnings(cr_base)
 
-# Feature detection so a C++23-only week can degrade on the -20 build instead of
-# failing it. Noticing WHICH features vanish is part of the curriculum.
-include(CheckIncludeFileCXX)
-check_include_file_cxx("expected" CR_HAS_EXPECTED)
-if(CR_HAS_EXPECTED)
-  target_compile_definitions(cr_base INTERFACE CR_HAS_EXPECTED=1)
-endif()
+# Feature detection: use the STANDARD feature-test macros in source
+# (__cpp_lib_expected, __cpp_lib_ranges, ...) via <version>, NOT a CMake header
+# check. check_include_file_cxx runs once at configure time with one standard and
+# only tests that the HEADER exists — but <expected> ships in libstdc++ 13 even
+# under -std=c++20, with std::expected guarded out inside it. That gave a false
+# positive that broke the C++20 build. The feature-test macro respects the actual
+# -std flag per translation unit, which is exactly what the dual-standard matrix
+# needs. (Bug found by the matrix itself in W17.)
 
 # TSan maps its shadow memory at FIXED addresses. Modern kernels (6.x, Ubuntu
 # 24.04) randomize mmap with 32 bits of entropy, which intermittently lands a

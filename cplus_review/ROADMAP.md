@@ -65,7 +65,7 @@
 - [x] **W14 — Build a HashMap** (open addressing + chaining) → `unordered_map`/`unordered_set`. Then explain *why* `std::unordered_map` is slow.
 - [x] **W15 — Build an RB or AVL tree** → `map` / `set` / `multimap`. Ordered vs unordered.
 - [x] **W16 — Build a binary heap** → `priority_queue`; `queue`/`stack` as adapters.
-- [ ] **W17 — `optional` · `variant` (+`visit`) · `any` · `std::expected`** *(C++23 — use it, don't clone it)*. Exceptions vs `expected` vs error codes.
+- [x] **W17 — `optional` · `variant` (+`visit`) · `any` · `std::expected`** *(C++23 — use it, don't clone it)*. Exceptions vs `expected` vs error codes.
 - [ ] **W18 — Build `StringView`**; `span` · dangling traps · `tuple`/`pair`
 - [ ] **W19 — Build `unique_ptr` / `shared_ptr` / `weak_ptr`.** control block · aliasing ctor · `enable_shared_from_this` · cycles
 - [ ] **W20 — `allocator` + `pmr`.** → **Mock #2** + **Design round #2**
