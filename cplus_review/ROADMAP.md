@@ -68,7 +68,7 @@
 - [x] **W17 — `optional` · `variant` (+`visit`) · `any` · `std::expected`** *(C++23 — use it, don't clone it)*. Exceptions vs `expected` vs error codes.
 - [x] **W18 — Build `StringView`**; `span` · dangling traps · `tuple`/`pair`
 - [x] **W19 — Build `unique_ptr` / `shared_ptr` / `weak_ptr`.** control block · aliasing ctor · `enable_shared_from_this` · cycles
-- [ ] **W20 — `allocator` + `pmr`.** → **Mock #2** + **Design round #2**
+- [x] **W20 — `allocator` + `pmr`.** → **Mock #2** + **Design round #2**
 
 ---
 

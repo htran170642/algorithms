@@ -16,3 +16,7 @@ target_link_libraries(bench_list_vs_vector PRIVATE cr_base benchmark::benchmark_
 add_executable(bench_hashmap bench_hashmap.cpp)
 target_link_libraries(bench_hashmap PRIVATE cr_base benchmark::benchmark_main)
 target_include_directories(bench_hashmap PRIVATE ${CMAKE_SOURCE_DIR}/phase02_stl/include)
+
+# W20 — pmr monotonic buffer vs the default allocator.
+add_executable(bench_pmr bench_pmr.cpp)
+target_link_libraries(bench_pmr PRIVATE cr_base benchmark::benchmark_main)
