@@ -76,16 +76,49 @@ Hệ quả: mỗi phần tử là một `new` riêng trên heap → mỗi lookup
 từng phần tử** (không copy thẳng được vì mask đổi → vị trí đổi). Đây cũng là lý do
 `reserve()` quan trọng — tránh rehash lặp.
 
-## 6. Vì sao open addressing thắng, và khi nào KHÔNG — **TỰ WRITE**
+## 6. Vì sao open addressing thắng, và khi nào KHÔNG
 
-Gợi ý: nối với W13 — điểm chung là gì? Khi nào chaining tốt hơn? (gợi ý: phần tử rất
-lớn, hoặc cần reference stability, hoặc load factor phải cao). Vì sao open addressing
-xoá phức tạp hơn?
+### Điểm chung với W13: cache
 
-**Trả lời:**
+W13 và W14 là **cùng một bài học**: **liền kề thắng node rải rác**, vì cache miss
+(~100ns) đắt gấp ~100 lần cache hit (~1ns).
 
+- W13: `vector` (liền kề) thắng `list` (node rải rác) khi duyệt/tìm.
+- W14: open addressing (một mảng liền kề) thắng chaining (node rải rác) khi lookup.
 
+Open addressing dò `ô kế tiếp` = đọc **cùng cache line** đã nạp → gần như miễn phí.
+Chaining đi theo con trỏ tới node trên heap → **cache miss mỗi bước**. Đó là toàn bộ
+2.4 lần chênh lệch.
 
+### Khi nào chaining (node-based) TỐT HƠN
+
+| Tình huống | Vì sao chaining thắng |
+|---|---|
+| **Cần reference stability** | node không dời khi rehash → con trỏ/iterator tới phần tử luôn hợp lệ. Open addressing rehash = dời cả mảng → mọi con trỏ chết. Đây chính là lý do `std::unordered_map` buộc chaining. |
+| **Phần tử RẤT lớn** | open addressing lưu phần tử *trong* mảng → rehash phải copy/move cả phần tử lớn; chaining chỉ move con trỏ node. |
+| **Load factor phải cao (>0.9)** | open addressing thoái hoá nặng khi gần đầy (probe dài); chaining vẫn chịu được vì mỗi bucket là list riêng. |
+| **Xoá rất nhiều** | chaining xoá = tháo node, sạch sẽ; open addressing tích tombstone → phải rehash dọn. |
+
+### Vì sao open addressing XOÁ phức tạp hơn
+
+Vì phần tử có thể nằm **sau** vị trí lý tưởng của nó (do probe khi va chạm). Xoá một ô
+giữa chuỗi mà đặt Empty sẽ **cắt đứt đường** tới phần tử phía sau → chúng biến mất
+(đã đo ở mục 3). Nên phải dùng **tombstone** — thêm trạng thái thứ ba, thêm logic ở cả
+find lẫn insert, và tombstone tích tụ làm chậm dần → phải rehash dọn.
+
+Chaining không có vấn đề này: mỗi bucket là list độc lập, xoá một node **không ảnh
+hưởng** node khác. Xoá O(1) sạch sẽ.
+
+### Tóm tắt trade-off
+
+> **Open addressing** = nhanh (cache), gọn bộ nhớ — nhưng cần load factor thấp, xoá
+> phức tạp (tombstone), rehash giết con trỏ.
+> **Chaining** = chậm hơn (cache miss) — nhưng reference stability, chịu load factor
+> cao, xoá đơn giản.
+>
+> Đa số trường hợp thực tế: **open addressing thắng** (Google/Facebook đều chọn). Chuẩn
+> C++ chọn chaining **không phải vì nó tốt hơn**, mà vì API `unordered_map` (2011) hứa
+> reference stability — và giờ không rút lại được.
 
 ---
 
