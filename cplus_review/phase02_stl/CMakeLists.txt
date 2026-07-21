@@ -7,5 +7,6 @@ cr_add_test(phase02_stl_test SOURCES
   tests/binary_heap_test.cpp    # W16 — binary heap -> priority_queue
   tests/error_handling_test.cpp # W17 — optional/variant/expected
   tests/string_view_test.cpp    # W18 — non-owning StringView
+  tests/smart_ptr_test.cpp      # W19 — unique/shared/weak, control block, cycles
 )
 target_include_directories(phase02_stl_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
