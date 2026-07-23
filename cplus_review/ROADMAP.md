@@ -8,7 +8,7 @@
 
 - [x] Week 0: Production Substrate
 - [x] Phase 1: Modern C++ (W1–W10)
-- [ ] Phase 2: STL Deep Dive (W11–W20)
+- [x] Phase 2: STL Deep Dive (W11–W20)
 - [ ] Phase 3: Templates (W21–W26)
 - [ ] Phase 4: Memory Management (W27–W31)
 - [ ] Phase 5: Concurrency (W32–W40)
