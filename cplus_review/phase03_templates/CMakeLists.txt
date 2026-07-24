@@ -2,5 +2,6 @@
 cr_add_test(phase03_templates_test SOURCES
   tests/placeholder_test.cpp
   tests/template_basics_test.cpp  # W21 — deduction, CTAD, specialization, lazy instantiation
+  tests/variadic_test.cpp         # W22 — packs, expansion patterns, fold expressions
 )
 target_include_directories(phase03_templates_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
