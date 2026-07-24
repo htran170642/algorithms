@@ -62,26 +62,107 @@ pick(42);    // → "plain function"      (KHÔNG phải "specialization")
 pick(4.2);   // → "generic template"
 ```
 
-Compiler chọn theo **hai giai đoạn**:
-```
-① OVERLOAD RESOLUTION — ứng viên: hàm thường + PRIMARY template
-     hàm thường thắng template khi khớp ngang nhau   → plain function ✅
-② chỉ khi template thắng ở ①, MỚI xét specialization của nó
-     → không bao giờ tới đây
-```
-Specialization không phải "ứng viên". Nó chỉ là **cách cài đặt khác cho một template đã
-thắng**. Template thua ở ① → specialization vô hình.
+### 3.1 Ba loại, đừng trộn lẫn
 
-Hệ quả gây sốc — **đổi thứ tự khai báo = đổi hành vi**:
+| Viết | Nó là gì |
+|---|---|
+| `template <typename T> void f(T)` | **KHUÔN ĐÚC**. Chưa có hàm nào tồn tại. |
+| `void f(int)` | **MỘT HÀM THẬT**, độc lập, có danh tính riêng. |
+| `template <> void f(int)` | **RUỘT THAY THẾ** dán vào một khuôn cụ thể. Không tự đứng được. |
+
+Bằng chứng "không tự đứng được":
 ```cpp
-template <typename T> void g(T);           // #1
-template <typename T> void g(T*);          // #2 overload khác
-template <>           void g<int*>(int*);  // specialize của #1
-g(ptr);   // #2 thắng ① → specialization của #1 KHÔNG BAO GIỜ chạy
+void p(char*) { }                       // ✅ hợp lệ dù KHÔNG có template p nào
+template <> void p<char*>(char*) { }    // ❌ lỗi nếu không có template p nào
+```
+Cái tên `p<char*>` nghĩa là *"cái p dạng khuôn nào đó, với T = char\*"* — nó **buộc phải
+trỏ về một khuôn**. Thứ không tự đứng được thì không thể là ứng viên trong một cuộc thi.
+
+### 3.2 Hai bước — bước ① không hề nhắc tới specialization
+
+```
+① CHỌN — ứng viên CHỈ gồm: hàm thường  +  PRIMARY template
+          hòa → hàm thường thắng;  giữa các khuôn → khuôn ĐẶC THÙ HƠN thắng
+          ← specialization VÔ HÌNH ở bước này
+② LẤY — chỉ khi kẻ thắng là một KHUÔN, mới hỏi: khuôn đó có bản mài tay
+          cho tham số này không?
 ```
 
-> **Đừng specialize function template. Dùng overload.** (Herb Sutter)
-> Specialization dành cho **class template**, nơi nó hoạt động đúng trực giác.
+Ẩn dụ: khuôn = **máy cắt chìa**, hàm thường = **chìa treo sẵn trên tường**,
+specialization = **chìa mài tay cất trong NGĂN KÉO CỦA MỘT MÁY CỤ THỂ**. Nhân viên chọn
+giữa tường và các máy; chỉ khi đã chọn máy #1 mới mở ngăn kéo máy #1.
+
+### 3.3 ⭐ Luật, và ba khả năng của nó
+
+> **Specialization chạy ⟺ khuôn chủ của nó thắng ở bước ①.**
+
+| Gọi | Vào đấu trường ① | Thắng ① | Ngăn kéo của kẻ thắng | Ra |
+|---|---|---|---|---|
+| `f(42)` | `f(T)` + **hàm thường** `f(int)` | hàm thường | — (bản mài tay ở ngăn `f(T)`, kẻ **thua**) | `plain function` |
+| `p(s)` `char* s` | `p(T)` + `p(T*)` | `p(T*)` đặc thù hơn | trống (bản mài tay ở ngăn `p(T)`, kẻ **thua**) | `p(T*)` |
+| `q(42)` | **chỉ** `q(T)` | `q(T)` — thắng vì không ai đấu | có ✅ | **`SPECIALIZATION`** |
+
+Hai câu trả lời sai phổ biến, cả hai đều là thái cực:
+*"specialization luôn thắng vì khớp chính xác nhất"* ❌ — nó không thi đấu.
+*"specialization không bao giờ chạy"* ❌ — nó chạy khi khuôn chủ thắng.
+
+Cứ hỏi ①② theo đúng thứ tự thì không bao giờ sai, kể cả với code chưa từng thấy.
+
+### 3.4 Hệ quả chí mạng — **đổi thứ tự khai báo = đổi hành vi**
+
+Hai nhóm dưới đây **giống hệt nhau từng ký tự**, chỉ khác vị trí một dòng:
+
+```cpp
+template <typename T> void g(T)    { }
+template <>           void g(int*) { }   // ← đứng TRƯỚC
+template <typename T> void g(T*)   { }
+
+template <typename T> void h(T)    { }
+template <typename T> void h(T*)   { }
+template <>           void h(int*) { }   // ← đứng SAU
+```
+```
+g(p)  ->  g(T*) chạy            (specialization câm)
+h(p)  ->  SPECIALIZATION chạy
+```
+*(đã chạy thật, GCC 13, `-std=c++23`)*
+
+Vì sao: `template <> void g(int*)` **không nói** nó thuộc khuôn nào — compiler tự đoán,
+và chỉ nhìn **những khuôn đã khai báo tính đến dòng đó**.
+- Ở `g`: mới chỉ thấy `g(T)` → dán vào `g(T)`, T = `int*`
+- Ở `h`: đã thấy cả `h(T*)` → khớp sát hơn → dán vào `h(T*)`, T = `int`
+
+Rồi bước ① chạy y hệt ở cả hai (`(T*)` đặc thù hơn `(T)` → thắng). Ở `g`, bản mài tay nằm
+trong ngăn kéo kẻ thua; ở `h`, nằm trong ngăn kéo kẻ thắng.
+
+> **Bạn không điều khiển được specialization của mình dán vào đâu.** Ai đó thêm một
+> overload phía trên nó — file khác, sáu tháng sau — và code bạn đổi hành vi, **không một
+> warning nào**.
+
+### 3.5 Làm gì thay vào
+
+```cpp
+template <typename T> void p(T)     { }
+template <typename T> void p(T*)    { }
+                      void p(char*) { }   // ← muốn xử lý riêng char*? HÀM THƯỜNG
+```
+Hàm thường có danh tính riêng → luôn vào thẳng bước ①, thắng ổn định, **không phụ thuộc
+thứ tự khai báo**.
+
+> **Function template: đừng specialize — dùng overload.** (Herb Sutter)
+> **Class template: cứ specialize thoải mái.**
+
+Vì sao class an toàn? **Class không có overloading.** Chỉ đúng một cái tên `std::hash` →
+không có danh sách ứng viên, không có bước ①, không có "khuôn nào thắng". Ngăn kéo *luôn*
+được mở. Đó cũng là lý do class template **có** partial specialization còn function
+template **bị chuẩn cấm** — function đã có overload để làm việc đó.
+
+Và đây không phải chuyện học thuật — nó là cơ chế bạn sẽ **dùng thật**:
+```cpp
+template <typename T> struct is_pointer     { static constexpr bool value = false; };
+template <typename T> struct is_pointer<T*> { static constexpr bool value = true;  };  // → W23
+template <> struct std::hash<MyType> { ... };   // dạy unordered_map băm kiểu của mình
+```
 
 ## 4. Lazy instantiation — class template là CÔNG THỨC, không phải class
 
