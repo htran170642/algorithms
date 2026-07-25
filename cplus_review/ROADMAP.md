@@ -78,7 +78,7 @@
 
 - [x] **W21** — function/class templates · deduction · CTAD · specialization vs overloading
 - [x] **W22** — variadic templates + fold expressions: type-safe `printf`, a tuple-like
-- [ ] **W23 — Build your own `<type_traits>`** subset from scratch
+- [x] **W23 — Build your own `<type_traits>`** subset from scratch
 - [ ] **W24** — SFINAE / `enable_if` **then** Concepts — *why* concepts exist (error messages, overload-set control)
 - [ ] **W25 — CRTP** + static polymorphism. Benchmark against virtual dispatch.
 - [ ] **W26** — consolidation → **Mock #3** + **Design round #3**
