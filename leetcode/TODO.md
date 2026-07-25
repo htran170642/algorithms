@@ -160,10 +160,10 @@
 - [x] LC 141 - Linked List Cycle
 - [x] LC 19 - Remove Nth Node From End
 - [x] LC 143 - Reorder List
-- [ ] LC 2 - Add Two Numbers
+- [x] LC 2 - Add Two Numbers
 - [ ] LC 138 - Copy List With Random Pointer
 - [ ] LC 23 - Merge K Sorted Lists
-- [ ] LC 146 - LRU cache
+- [x] LC 146 - LRU cache
 
 ---
 
@@ -177,10 +177,10 @@
 
 ## Problems
 
-- [ ] LC 20 - Valid Parentheses
-- [ ] LC 155 - Min Stack
+- [x] LC 20 - Valid Parentheses
+- [x] LC 155 - Min Stack
 - [ ] LC 150 - Evaluate Reverse Polish Notation
-- [ ] LC 739 - Daily Temperatures
+- [x] LC 739 - Daily Temperatures
 - [ ] LC 853 - Car Fleet
 - [ ] LC 84 - Largest Rectangle in Histogram
 
