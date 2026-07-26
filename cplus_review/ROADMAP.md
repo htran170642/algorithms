@@ -87,7 +87,7 @@
 
 # Phase 4 — Memory Management (W27–W31)
 
-- [ ] **W27** — stack vs heap · memory layout · alignment · padding · `alignas`. Reorder structs to shrink them.
+- [x] **W27** — stack vs heap · memory layout · alignment · padding · `alignas`. Reorder structs to shrink them.
 - [ ] **W28** — placement new · manual lifetime · aligned storage · `std::launder` (overview)
 - [ ] **W29 — Build an Arena/bump allocator** + STL-compatible `Allocator` → wire into `pmr`
 - [ ] **W30 — Build a Pool allocator** (free list). Benchmark vs `new`/`delete`.
