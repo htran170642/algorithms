@@ -180,6 +180,8 @@
 - [x] LC 20 - Valid Parentheses
 - [x] LC 155 - Min Stack
 - [ ] LC 150 - Evaluate Reverse Polish Notation
+- [ ] LC 496 - Next Greater Element I
+- [] LC 503 - Next Greater Element II
 - [x] LC 739 - Daily Temperatures
 - [ ] LC 853 - Car Fleet
 - [ ] LC 84 - Largest Rectangle in Histogram
