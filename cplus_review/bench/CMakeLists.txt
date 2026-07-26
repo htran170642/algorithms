@@ -20,3 +20,8 @@ target_include_directories(bench_hashmap PRIVATE ${CMAKE_SOURCE_DIR}/phase02_stl
 # W20 — pmr monotonic buffer vs the default allocator.
 add_executable(bench_pmr bench_pmr.cpp)
 target_link_libraries(bench_pmr PRIVATE cr_base benchmark::benchmark_main)
+
+# W25 — virtual dispatch vs CRTP static polymorphism.
+add_executable(bench_crtp bench_crtp.cpp)
+target_link_libraries(bench_crtp PRIVATE cr_base benchmark::benchmark_main)
+target_include_directories(bench_crtp PRIVATE ${CMAKE_SOURCE_DIR}/phase03_templates/include)
