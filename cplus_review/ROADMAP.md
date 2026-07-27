@@ -90,7 +90,7 @@
 - [x] **W27** — stack vs heap · memory layout · alignment · padding · `alignas`. Reorder structs to shrink them.
 - [x] **W28** — placement new · manual lifetime · aligned storage · `std::launder` (overview)
 - [~] **W29 — Arena/bump allocator** — concept note done (purpose, bump mechanic, no-op dealloc, pmr). Build deferred; `std::pmr::monotonic_buffer_resource` is the standard equivalent.
-- [ ] **W30 — Build a Pool allocator** (free list). Benchmark vs `new`/`delete`.
+- [x] **W30 — Build a Pool allocator** (free list). Benchmark vs `new`/`delete`. (pool 2055 ns vs new/delete 13273 ns ≈ 6.5×)
 - [ ] **W31 — Cache locality** (AoS vs SoA) + **false sharing**, measured with `perf` counters. → **Mock #4** + **Design round #4**
 
 ---
