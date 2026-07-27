@@ -10,7 +10,7 @@
 - [x] Phase 1: Modern C++ (W1–W10)
 - [x] Phase 2: STL Deep Dive (W11–W20)
 - [ ] Phase 3: Templates (W21–W26)
-- [ ] Phase 4: Memory Management (W27–W31)
+- [x] Phase 4: Memory Management (W27–W31)
 - [ ] Phase 5: Concurrency (W32–W40)
 - [ ] Phase 6: Performance (W41–W44)
 - [ ] Phase 7: Linux & OS (W45–W49)
@@ -91,7 +91,7 @@
 - [x] **W28** — placement new · manual lifetime · aligned storage · `std::launder` (overview)
 - [~] **W29 — Arena/bump allocator** — concept note done (purpose, bump mechanic, no-op dealloc, pmr). Build deferred; `std::pmr::monotonic_buffer_resource` is the standard equivalent.
 - [x] **W30 — Build a Pool allocator** (free list). Benchmark vs `new`/`delete`. (pool 2055 ns vs new/delete 13273 ns ≈ 6.5×)
-- [ ] **W31 — Cache locality** (AoS vs SoA) + **false sharing**, measured with `perf` counters. → **Mock #4** + **Design round #4**
+- [x] **W31 — Cache locality** (AoS vs SoA) + **false sharing**, measured. (SoA 1994 µs vs AoS 9514 µs ≈ 4.8×; padded 36.8 ms vs packed 1017 ms ≈ 27×. `perf` cache-miss deferred: needs `sudo sysctl kernel.perf_event_paranoid=1`.) → **Design round #4** done; Mock #4 skipped (as W26).
 
 ---
 

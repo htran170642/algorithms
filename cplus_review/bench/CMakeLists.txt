@@ -30,3 +30,13 @@ target_include_directories(bench_crtp PRIVATE ${CMAKE_SOURCE_DIR}/phase03_templa
 add_executable(bench_pool bench_pool.cpp)
 target_link_libraries(bench_pool PRIVATE cr_base benchmark::benchmark_main)
 target_include_directories(bench_pool PRIVATE ${CMAKE_SOURCE_DIR}/phase04_memory/include)
+
+# W31 — cache locality: array-of-structs vs struct-of-arrays streaming few fields.
+add_executable(bench_aos_soa bench_aos_soa.cpp)
+target_link_libraries(bench_aos_soa PRIVATE cr_base benchmark::benchmark_main)
+
+# W31 — false sharing: adjacent hot counters vs one-per-cache-line.
+# std::thread needs the platform thread library; Phase 5 will lean on this too.
+find_package(Threads REQUIRED)
+add_executable(bench_false_sharing bench_false_sharing.cpp)
+target_link_libraries(bench_false_sharing PRIVATE cr_base benchmark::benchmark_main Threads::Threads)
