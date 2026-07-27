@@ -107,7 +107,13 @@ private:
 
     char*       data_;             // -> buf_ (short) or heap (long)
     std::size_t size_;
-    char        buf_[kBufSize];    // the inline SSO buffer
+    // Zero-initialized so the WHOLE 16 bytes are always defined. swap() below
+    // blind-copies all kBufSize bytes for simplicity; without this, the bytes
+    // past the string length would be uninitialized and that memcpy would read
+    // indeterminate values — a real UB smell that GCC -O2 catches as
+    // -Werror=uninitialized. Defining the tail costs one 16-byte clear per
+    // construction and makes the copy correct.
+    char        buf_[kBufSize]{};  // the inline SSO buffer
 };
 
 }  // namespace cr
