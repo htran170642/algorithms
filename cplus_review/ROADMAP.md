@@ -99,7 +99,7 @@
 
 > Expect to be wrong often. That **is** the curriculum.
 
-- [ ] **W32** — `thread` + `jthread`/`stop_token` · `mutex` · `lock_guard`/`unique_lock`/`scoped_lock` · deadlock. **Write a data race; let TSAN catch it.**
+- [x] **W32** — `thread` + `jthread`/`stop_token` · `mutex` · `lock_guard`/`unique_lock`/`scoped_lock` · deadlock. **Wrote a data race; TSan caught it.** (RacyCounter: 197397/800000, ~75% lost updates + TSan two-stack report at `counter.hpp:25`; SafeCounter clean under tsan-20/-23. Racy demo quarantined behind `DISABLED_` so gate stays green. `setarch -R` auto-wrapped by root CMake.)
 - [ ] **W33** — `condition_variable` → **build a blocking queue**. Spurious + lost wakeups.
 - [ ] **W34** — `latch` · `barrier` · `counting_semaphore`
 - [ ] **W35** — `future` / `promise` / `packaged_task` / `async` → build a simple `Future`
