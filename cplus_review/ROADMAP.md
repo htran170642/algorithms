@@ -100,7 +100,7 @@
 > Expect to be wrong often. That **is** the curriculum.
 
 - [x] **W32** — `thread` + `jthread`/`stop_token` · `mutex` · `lock_guard`/`unique_lock`/`scoped_lock` · deadlock. **Wrote a data race; TSan caught it.** (RacyCounter: 197397/800000, ~75% lost updates + TSan two-stack report at `counter.hpp:25`; SafeCounter clean under tsan-20/-23. Racy demo quarantined behind `DISABLED_` so gate stays green. `setarch -R` auto-wrapped by root CMake.)
-- [ ] **W33** — `condition_variable` → **build a blocking queue**. Spurious + lost wakeups.
+- [x] **W33** — `condition_variable` → **built `BlockingQueue<T>`**. Spurious + lost wakeups mastered. (state-change-under-lock defeats lost wakeup; `wait(lk,pred)` = the `while` loop defeats spurious; `push`→`notify_one`, `close`→`notify_all` avoids thundering herd; `close()` wakes blocked consumers → `nullopt` drain protocol. Conservation stress 4×4×50k=200k items, sum-in==sum-out, clean under tsan-20/-23. Real component — reused W36 ThreadPool, W56 producer-consumer.)
 - [ ] **W34** — `latch` · `barrier` · `counting_semaphore`
 - [ ] **W35** — `future` / `promise` / `packaged_task` / `async` → build a simple `Future`
 - [ ] **W36 — Build a ThreadPool** *(moved here from Phase 9 — it's the concurrency capstone)*
