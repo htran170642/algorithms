@@ -8,6 +8,8 @@ class Solution:
         4 -> -1
         3 -> 4
         1 -> 3
+        
+        stack giam dan thi phai xoa nhung phan tu trong stack nho hon no
         '''
         for num in reversed(nums2):
             

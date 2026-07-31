@@ -198,11 +198,11 @@
 
 ## Problems
 
-- [ ] LC 104 - Maximum Depth of Binary Tree
-- [ ] LC 100 - Same Tree
-- [ ] LC 226 - Invert Binary Tree
-- [ ] LC 110 - Balanced Binary Tree
-- [ ] LC 543 - Diameter of Binary Tree
+- [x] LC 104 - Maximum Depth of Binary Tree
+- [x] LC 100 - Same Tree
+- [x] LC 226 - Invert Binary Tree
+- [x] LC 110 - Balanced Binary Tree
+- [x] LC 543 - Diameter of Binary Tree
 - [ ] LC 98 - Validate BST
 - [ ] LC 230 - Kth Smallest Element in BST
 - [ ] LC 236 - Lowest Common Ancestor
