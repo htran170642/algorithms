@@ -203,9 +203,9 @@
 - [x] LC 226 - Invert Binary Tree
 - [x] LC 110 - Balanced Binary Tree
 - [x] LC 543 - Diameter of Binary Tree
-- [ ] LC 98 - Validate BST
-- [ ] LC 230 - Kth Smallest Element in BST
-- [ ] LC 236 - Lowest Common Ancestor
+- [x] LC 98 - Validate BST
+- [x] LC 230 - Kth Smallest Element in BST
+- [x] LC 236 - Lowest Common Ancestor
 
 ---
 
