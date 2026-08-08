@@ -7,6 +7,7 @@ cr_add_test(phase05_concurrency_test SOURCES
   tests/future_test.cpp           # W35 — future/promise/packaged_task/async; mini Future<T> shared state
   tests/thread_pool_test.cpp      # W36 — ThreadPool: jthread workers + task queue + packaged_task
   tests/memory_order_test.cpp     # W37 — memory_order: SB litmus, release/acquire, wait/notify, atomic_ref
+  tests/spsc_ring_test.cpp        # W38 — SPSC lock-free ring buffer: release/acquire, monotonic indices, false-sharing padding
 )
 find_package(Threads REQUIRED)
 target_link_libraries(phase05_concurrency_test PRIVATE Threads::Threads)
