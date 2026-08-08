@@ -45,3 +45,8 @@ target_link_libraries(bench_false_sharing PRIVATE cr_base benchmark::benchmark_m
 # (items/sec, UseRealTime), and alignas(64) padding measured on the ring itself.
 add_executable(bench_spsc_ring bench_spsc_ring.cpp)
 target_link_libraries(bench_spsc_ring PRIVATE cr_base benchmark::benchmark_main Threads::Threads)
+
+# W42 — branch prediction: same work, sorted vs random data, 3-6x apart.
+# Prove it with `perf stat -e branch-misses` (see the file header).
+add_executable(bench_branch_predict bench_branch_predict.cpp)
+target_link_libraries(bench_branch_predict PRIVATE cr_base benchmark::benchmark_main)
