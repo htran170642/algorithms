@@ -40,3 +40,8 @@ target_link_libraries(bench_aos_soa PRIVATE cr_base benchmark::benchmark_main)
 find_package(Threads REQUIRED)
 add_executable(bench_false_sharing bench_false_sharing.cpp)
 target_link_libraries(bench_false_sharing PRIVATE cr_base benchmark::benchmark_main Threads::Threads)
+
+# W41 — benchmarking discipline on a REAL component: SpscRing throughput
+# (items/sec, UseRealTime), and alignas(64) padding measured on the ring itself.
+add_executable(bench_spsc_ring bench_spsc_ring.cpp)
+target_link_libraries(bench_spsc_ring PRIVATE cr_base benchmark::benchmark_main Threads::Threads)

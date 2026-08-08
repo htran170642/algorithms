@@ -113,7 +113,7 @@
 
 # Phase 6 — Performance (W41–W44)
 
-- [ ] **W41** — benchmarking discipline: Google Benchmark · `DoNotOptimize` · microbenchmark pitfalls
+- [x] **W41** — benchmarking discipline: Google Benchmark · `DoNotOptimize` · microbenchmark pitfalls. `bench_spsc_ring` đo component thật W38: SpscRing 97.8M item/s (1P-1C, release-23, UseRealTime+SetItemsProcessed). Chứng minh bằng SỐ 3 bẫy: DCE (bench_all `SumButOptimizedAway`=0ns vs `MeasuredHonestly`), phải benchmark release (-O0 đảo thứ hạng), nhiễu turbo (`CPU scaling enabled` → đọc mean±stddev qua repetitions). `alignas(64)` trên head_/tail_ = **+8%** trên ring thật (Padded 95.9M vs Packed 88.9M) — payoff thật nhưng nhỏ hơn 3-10x của counter tổng hợp W31, vì op ring còn buffer store/load. Nợ Phase 5: W39 (MPMC/ABA), W40 (TSAN sweep + Mock #5). Note: phase06_performance/notes/benchmarking.md.
 - [ ] **W42** — CPU cache · prefetch · branch prediction, measured with `perf stat`
 - [ ] **W43 — Copy elision / RVO / NRVO** — verify with the `Probe` from W1. Find where moves *don't* happen.
 - [ ] **W44** — SIMD awareness · autovectorization · optimization flags · reading asm → **Mock #6** + **Design round #6**
