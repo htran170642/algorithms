@@ -123,7 +123,7 @@
 
 # Phase 7 — Linux & OS (W45–W49)
 
-- [ ] **W45** — process / thread · `fork` / `exec` · scheduling · `/proc`
+- [x] **W45** — process / thread · `fork` / `exec` · scheduling · `/proc` — `phase07_process_spawner_test` (`ProcessSpawner`: fork+execv+waitpid, stdout via pipe) + `read_vm_rss_kb()` parsing `/proc/self/status`. MEASURED: echo capture → stdout read back in parent (fd inheritance survives execv); `/bin/false` → `exited()`/exit_code 1; `sh -c 'kill -TERM $$'` → `signaled()`/term_signal 15 (`WIFSIGNALED`≠`WIFEXITED`, mutually exclusive); malloc 64MiB+memset → ΔVmRSS>48MiB (demand paging = COW's first-touch mechanism). execv fail must `_exit(127)` not return. Green under -20/-23, asan, ubsan. → notes/processes.md
 - [ ] **W46** — virtual memory · `mmap` · page faults · huge pages
 - [ ] **W47** — signals · pipes · shared memory
 - [ ] **W48** — `select` → `poll` → **`epoll`: build an echo server**
