@@ -124,7 +124,7 @@
 # Phase 7 — Linux & OS (W45–W49)
 
 - [x] **W45** — process / thread · `fork` / `exec` · scheduling · `/proc` — `phase07_process_spawner_test` (`ProcessSpawner`: fork+execv+waitpid, stdout via pipe) + `read_vm_rss_kb()` parsing `/proc/self/status`. MEASURED: echo capture → stdout read back in parent (fd inheritance survives execv); `/bin/false` → `exited()`/exit_code 1; `sh -c 'kill -TERM $$'` → `signaled()`/term_signal 15 (`WIFSIGNALED`≠`WIFEXITED`, mutually exclusive); malloc 64MiB+memset → ΔVmRSS>48MiB (demand paging = COW's first-touch mechanism). execv fail must `_exit(127)` not return. Green under -20/-23, asan, ubsan. → notes/processes.md
-- [ ] **W46** — virtual memory · `mmap` · page faults · huge pages
+- [x] **W46** — virtual memory · `mmap` · page faults · huge pages — `phase07_mapped_file_test` (`MappedFile`: RAII move-only quanh `mmap`/`munmap`) + `read_page_faults()` (`getrusage` `ru_minflt`/`ru_majflt`). MEASURED: touch 32 MiB file (8192 trang) → ΔVmRSS=32900 kB (~file size) = demand paging; Δminor=16 Δmajor=0 → **2 MiB/fault** (large folios batch page cache, số fault ≪ số trang → assert ΔVmRSS chứ đừng assert số fault). `mmap` = tạo VMA không cấp RAM; `MAP_FAILED`≠nullptr; file rỗng chặn EINVAL; move cướp quyền → 1 munmap (asan sạch). Green -20/-23, asan, ubsan. → notes/virtual_memory.md
 - [ ] **W47** — signals · pipes · shared memory
 - [ ] **W48** — `select` → `poll` → **`epoll`: build an echo server**
 - [ ] **W49** — `strace` / `ltrace` → **Mock #7** + **Design round #7**
