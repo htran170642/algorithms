@@ -219,10 +219,10 @@
 
 ## Problems
 
-- [ ] LC 102 - Binary Tree Level Order Traversal
-- [ ] LC 199 - Binary Tree Right Side View
+- [x] LC 102 - Binary Tree Level Order Traversal
+- [x] LC 199 - Binary Tree Right Side View
 - [ ] LC 124 - Binary Tree Maximum Path Sum
-- [ ] LC 105 - Construct Binary Tree
+- [x] LC 105 - Construct Binary Tree
 - [ ] LC 297 - Serialize and Deserialize Binary Tree
 
 ---
@@ -237,8 +237,8 @@
 
 ## Problems
 
-- [ ] LC 215 - Kth Largest Element in an Array
-- [ ] LC 347 - Top K Frequent Elements
+- [x] LC 215 - Kth Largest Element in an Array
+- [x] LC 347 - Top K Frequent Elements
 - [ ] LC 973 - K Closest Points to Origin
 - [ ] LC 621 - Task Scheduler
 - [ ] LC 295 - Find Median from Data Stream
