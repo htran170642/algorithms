@@ -239,8 +239,8 @@
 
 - [x] LC 215 - Kth Largest Element in an Array
 - [x] LC 347 - Top K Frequent Elements
-- [ ] LC 973 - K Closest Points to Origin
-- [ ] LC 621 - Task Scheduler
+- [x] LC 973 - K Closest Points to Origin
+- [x] LC 621 - Task Scheduler
 - [ ] LC 295 - Find Median from Data Stream
 
 ---
