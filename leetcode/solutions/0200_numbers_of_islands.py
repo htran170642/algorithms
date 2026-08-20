@@ -31,8 +31,6 @@ class Solution:
                         q.append((nr, nc))
                         grid[nr][nc] = '0'
 
-
-
         count = 0
         for i in range(len(grid)):
             for j in range(len(grid[0])):

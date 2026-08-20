@@ -255,8 +255,8 @@
 
 ## Problems
 
-- [ ] LC 200 - Number of Islands
-- [ ] LC 695 - Max Area of Island
+- [x] LC 200 - Number of Islands
+- [x] LC 695 - Max Area of Island
 - [ ] LC 133 - Clone Graph
 - [ ] LC 417 - Pacific Atlantic Water Flow
 - [ ] LC 547 - Number of Provinces
