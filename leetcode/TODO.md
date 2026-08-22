@@ -70,6 +70,28 @@
 - [x] LC 15 - 3Sum
 - [x] LC 42 - Trapping Rain Water
 
+26  → Remove Duplicates
+27  → Remove Element
+88  → Merge Sorted Array
+392 → Is Subsequence
+977 → Squares of Sorted Array
+
+344 → Reverse String
+345 → Reverse Vowels
+680 → Valid Palindrome II
+
+349 → Intersection
+350 → Intersection II
+844 → Backspace String Compare
+
+881 → Boats to Save People
+948 → Bag of Tokens
+986 → Interval List Intersections
+
+524 → Longest Word through Deleting
+161 → One Edit Distance
+845 → Longest Mountain
+
 ## Review
 
 ### Patterns Learned
@@ -259,7 +281,7 @@
 - [x] LC 695 - Max Area of Island
 - [ ] LC 133 - Clone Graph
 - [ ] LC 417 - Pacific Atlantic Water Flow
-- [ ] LC 547 - Number of Provinces
+- [x] LC 547 - Number of Provinces
 
 ---
 
