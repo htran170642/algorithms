@@ -1,0 +1,72 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+
+    { "name": "std17", "hidden": true, "inherits": "base",
+      "cacheVariables": { "CMAKE_CXX_STANDARD": "17" } },
+    { "name": "std20", "hidden": true, "inherits": "base",
+      "cacheVariables": { "CMAKE_CXX_STANDARD": "20" } },
+
+    { "name": "debug-17", "inherits": "std17", "displayName": "Debug C++17",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "none" } },
+    { "name": "debug-20", "inherits": "std20", "displayName": "Debug C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "none" } },
+
+    { "name": "asan-17", "inherits": "std17", "displayName": "ASan+UBSan C++17",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "address" } },
+    { "name": "asan-20", "inherits": "std20", "displayName": "ASan+UBSan C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "address" } },
+
+    { "name": "ubsan-17", "inherits": "std17", "displayName": "UBSan C++17",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "undefined" } },
+    { "name": "ubsan-20", "inherits": "std20", "displayName": "UBSan C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "undefined" } },
+
+    { "name": "tsan-17", "inherits": "std17", "displayName": "TSan C++17",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "thread" } },
+    { "name": "tsan-20", "inherits": "std20", "displayName": "TSan C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "AV_SANITIZER": "thread" } },
+
+    { "name": "release-17", "inherits": "std17", "displayName": "Release C++17",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "AV_SANITIZER": "none", "AV_BUILD_BENCH": "ON" } },
+    { "name": "release-20", "inherits": "std20", "displayName": "Release C++20",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "AV_SANITIZER": "none", "AV_BUILD_BENCH": "ON" } }
+  ],
+
+  "buildPresets": [
+    { "name": "debug-17",   "configurePreset": "debug-17" },
+    { "name": "debug-20",   "configurePreset": "debug-20" },
+    { "name": "asan-17",    "configurePreset": "asan-17" },
+    { "name": "asan-20",    "configurePreset": "asan-20" },
+    { "name": "ubsan-17",   "configurePreset": "ubsan-17" },
+    { "name": "ubsan-20",   "configurePreset": "ubsan-20" },
+    { "name": "tsan-17",    "configurePreset": "tsan-17" },
+    { "name": "tsan-20",    "configurePreset": "tsan-20" },
+    { "name": "release-17", "configurePreset": "release-17" },
+    { "name": "release-20", "configurePreset": "release-20" }
+  ],
+
+  "testPresets": [
+    { "name": "debug-17",   "configurePreset": "debug-17",   "output": { "outputOnFailure": true } },
+    { "name": "debug-20",   "configurePreset": "debug-20",   "output": { "outputOnFailure": true } },
+    { "name": "asan-17",    "configurePreset": "asan-17",    "output": { "outputOnFailure": true } },
+    { "name": "asan-20",    "configurePreset": "asan-20",    "output": { "outputOnFailure": true } },
+    { "name": "ubsan-17",   "configurePreset": "ubsan-17",   "output": { "outputOnFailure": true } },
+    { "name": "ubsan-20",   "configurePreset": "ubsan-20",   "output": { "outputOnFailure": true } },
+    { "name": "tsan-17",    "configurePreset": "tsan-17",    "output": { "outputOnFailure": true } },
+    { "name": "tsan-20",    "configurePreset": "tsan-20",    "output": { "outputOnFailure": true } },
+    { "name": "release-17", "configurePreset": "release-17", "output": { "outputOnFailure": true } },
+    { "name": "release-20", "configurePreset": "release-20", "output": { "outputOnFailure": true } }
+  ]
+}
