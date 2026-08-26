@@ -1,5 +1,8 @@
 # Week 1 — Bits, CAN frames and the spine
 
+> Vietnamese translation: [w01_spine_vi.md](w01_spine_vi.md). Keep both in step
+> when this file changes.
+
 ## 1. Concept
 
 A vehicle signal is not a number sitting in a message. It is a **rule** for
