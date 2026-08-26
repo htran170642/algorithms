@@ -18,7 +18,7 @@ implemented, debugged and defended* — not when the code compiles.
 | Wk | Topic | Artifact | Read real code | Note | Done |
 |---:|---|---|---|---|:--:|
 | 0 | Scaffold | CMake · GTest · 4 sanitizer presets · `av_log` · clang-tidy · `check.sh` | — | — | [x] |
-| 1 | Bits + the spine | `av_can`: Intel/Motorola bit walk · `CanFrame` + CAN-FD DLC · `SignalSpec` decode/encode · `spine` demo with 2 injected faults | — | [`w01_spine.md`](notes/w01_spine.md) · [vi](notes/w01_spine_vi.md) | [x] |
+| 1 | Bits + the spine | `av_can`: Intel/Motorola bit walk · `CanFrame` + CAN-FD DLC · `SignalSpec` decode/encode · `spine` demo with 2 injected faults | — | [`w01_spine.md`](notes/w01_spine.md) · [vi](notes/w01_spine_vi.md) · [code](notes/w01_code_walkthrough.md) | [x] |
 | 2 | Cockpit thread model | `BoundedQueue<T>` · rx/processing/UI threads · backpressure · graceful shutdown · TSan green | — | `w02_threads.md` | [ ] |
 | 3 | Linux for CAN | `epoll` · non-blocking fd · Unix domain socket · **shared memory** · UDS-vs-shm latency benchmark | `can-utils`: `candump.c`, `cansend.c` | `w03_ipc.md` | [ ] |
 | 4 | CAN fundamentals | arbitration simulator · error active/passive/bus-off state machine | — | `w04_can.md` | [ ] |
