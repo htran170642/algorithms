@@ -24,3 +24,4 @@ include(CTest)
 find_package(GTest REQUIRED)
 
 add_subdirectory(libs)
+add_subdirectory(apps)

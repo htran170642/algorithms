@@ -1,0 +1,11 @@
+# Test-only overrides. Everything else is inherited from the root .clang-tidy.
+#
+# bugprone-unchecked-optional-access cannot see through GoogleTest's assertion
+# macros: after `ASSERT_TRUE(x.has_value())` it still reports the following
+# `x.value()` as unchecked. The check stays enabled for library and app code,
+# where it is the one that would catch a real nullopt dereference.
+
+InheritParentConfig: true
+
+Checks: >
+  -bugprone-unchecked-optional-access

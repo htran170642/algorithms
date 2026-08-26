@@ -18,7 +18,7 @@ implemented, debugged and defended* — not when the code compiles.
 | Wk | Topic | Artifact | Read real code | Note | Done |
 |---:|---|---|---|---|:--:|
 | 0 | Scaffold | CMake · GTest · 4 sanitizer presets · `av_log` · clang-tidy · `check.sh` | — | — | [x] |
-| 1 | Bits + the spine | `av::bit` (Intel/Motorola) · `CanFrame` · decode `VehicleSpeed` · console output | — | `w01_spine.md` | [ ] |
+| 1 | Bits + the spine | `av_can`: Intel/Motorola bit walk · `CanFrame` + CAN-FD DLC · `SignalSpec` decode/encode · `spine` demo with 2 injected faults | — | [`w01_spine.md`](notes/w01_spine.md) | [x] |
 | 2 | Cockpit thread model | `BoundedQueue<T>` · rx/processing/UI threads · backpressure · graceful shutdown · TSan green | — | `w02_threads.md` | [ ] |
 | 3 | Linux for CAN | `epoll` · non-blocking fd · Unix domain socket · **shared memory** · UDS-vs-shm latency benchmark | `can-utils`: `candump.c`, `cansend.c` | `w03_ipc.md` | [ ] |
 | 4 | CAN fundamentals | arbitration simulator · error active/passive/bus-off state machine | — | `w04_can.md` | [ ] |
@@ -70,9 +70,10 @@ The 15 items in CLAUDE.md §12. Tick them in `notes/w17_interview.md`, not here.
 ## Environment
 
 ```bash
-./check.sh                      # debug + asan + ubsan + tsan + clang-tidy
-./check.sh fast                 # debug only
-sudo ./scripts/setup_vcan.sh    # vcan0, from week 4
+./check.sh                        # debug + asan + ubsan + tsan + clang-tidy
+./check.sh fast                   # debug only
+./build/debug/apps/spine/spine    # week 1 demo
+sudo ./scripts/setup_vcan.sh      # vcan0, from week 4
 ```
 
 | Dependency | Status |
