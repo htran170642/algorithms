@@ -1,0 +1,15 @@
+# Overrides for the one directory that talks directly to kernel APIs.
+#
+# The BSD sockets interface is defined in terms of `struct sockaddr*`, and the
+# only way to pass a `sockaddr_un` to bind()/connect() is a reinterpret_cast.
+# There is no conforming alternative -- static_cast will not do it, and a union
+# would merely hide the same cast behind more code. Week 5 adds sockaddr_can
+# for SocketCAN, which has exactly the same shape.
+#
+# The check stays enabled everywhere else, where a reinterpret_cast really is
+# a smell worth arguing about.
+
+InheritParentConfig: true
+
+Checks: >
+  -cppcoreguidelines-pro-type-reinterpret-cast

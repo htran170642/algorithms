@@ -1,0 +1,18 @@
+# Test-only overrides. Identical to libs/av_can/tests and libs/av_conc/tests so
+# the rule for test code is one rule.
+#
+# bugprone-unchecked-optional-access cannot see through GoogleTest's assertion
+# macros: after `ASSERT_TRUE(x.has_value())` it still reports `x->foo()` as
+# unchecked. The check stays enabled for library and app code.
+#
+# readability-function-cognitive-complexity measures the *expanded* TestBody,
+# where every EXPECT_ macro is a branch.
+
+InheritParentConfig: true
+
+Checks: >
+  -bugprone-unchecked-optional-access
+
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '50'

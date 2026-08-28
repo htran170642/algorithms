@@ -4,8 +4,8 @@
 #   av_can      week 1   bit walking, CanFrame, signal decode    <- here
 #               week 5   ... plus SocketCAN
 #               week 6   ... plus a DBC parser
-#   av_conc     week 2   BoundedQueue -- between threads            <- here
-#   av_ipc      week 3   Unix domain socket, shared memory -- between processes
+#   av_conc     week 2   BoundedQueue -- between threads
+#   av_ipc      week 3   epoll, Unix domain socket, shared memory  <- here
 #   av_service  week 8   mini SOME/IP + VehicleService
 #
 # av_conc and av_ipc stay separate on purpose: one crosses a thread boundary,
@@ -19,3 +19,4 @@
 add_subdirectory(av_log)
 add_subdirectory(av_can)
 add_subdirectory(av_conc)
+add_subdirectory(av_ipc)
