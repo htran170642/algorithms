@@ -1,16 +1,14 @@
 # Test-only overrides. Everything else is inherited from the root .clang-tidy.
-# Kept identical to libs/av_conc/tests/.clang-tidy so the rule for test code is
-# one rule, not a per-directory negotiation.
 #
 # bugprone-unchecked-optional-access cannot see through GoogleTest's assertion
 # macros: after `ASSERT_TRUE(x.has_value())` it still reports the following
-# `x.value()` as unchecked. The check stays enabled for library and app code,
-# where it is the one that would catch a real nullopt dereference.
+# `x.value()` as unchecked.
 #
 # readability-function-cognitive-complexity measures the *expanded* TestBody.
 # Every EXPECT_ macro becomes a branch, and a lambda passed to std::thread adds
-# a nesting multiplier on top, so a short and perfectly clear test can score
-# above 25. The check stays at 25 where the number means what it says.
+# a nesting multiplier on top, so a fourteen-line test that reads perfectly
+# clearly scores 30. The check stays at 25 for library and app code, where the
+# number means what it says.
 
 InheritParentConfig: true
 
