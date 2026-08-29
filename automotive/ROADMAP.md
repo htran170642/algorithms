@@ -21,7 +21,7 @@ implemented, debugged and defended* — not when the code compiles.
 | 1 | Bits + the spine | `av_can`: Intel/Motorola bit walk · `CanFrame` + CAN-FD DLC · `SignalSpec` decode/encode · `spine` demo with 2 injected faults | — | [`w01_spine.md`](notes/w01_spine.md) · [vi](notes/w01_spine_vi.md) · [code](notes/w01_code_walkthrough.md) | [x] |
 | 2 | Cockpit thread model | `av_conc`: `BoundedQueue<T>` (ring buffer, close-then-drain) · `cockpit` demo: rx/decode/ui threads, drop-oldest backpressure, ordered shutdown · TSan green | — | [`w02_threads.md`](notes/w02_threads.md) | [x] |
 | 3 | Linux IPC | `av_ipc`: `UniqueFd` · `UnixSocket` (SEQPACKET) · `Poller` (epoll) · `SharedRing` (shm, SPSC lock-free) · `ipc_bench`: **10x** median, 12x p99 | deferred to wk 5 | [`w03_ipc.md`](notes/w03_ipc.md) | [x] |
-| 4 | CAN fundamentals | arbitration simulator · error active/passive/bus-off state machine | — | `w04_can.md` | [ ] |
+| 4 | CAN fundamentals | `av_can`: bit-by-bit arbitration simulator (wired-AND, RTR/SRR/IDE tie-breakers) · `ErrorCounters` active/passive/bus-off + recovery · `can_bus` demo: 6 scenarios, 4 faults | — | [`w04_can.md`](notes/w04_can.md) | [x] |
 | 5 | SocketCAN | `sim_vehicle` → `vcan0` → C++ receiver over `PF_CAN` | kernel `net/can/raw.c` · `Documentation/networking/can.rst` | `w05_socketcan.md` | [ ] |
 | 6 | CAN-FD + DBC | `.dbc` parser · all 7 signals of CLAUDE.md §7 decoded · BRS / 64-byte payload | — | `w06_dbc.md` | [ ] |
 | 7 | Automotive Ethernet | UDP/multicast · **100BASE-T1 vs office Ethernet** · VLAN · QoS · PTP | — | `w07_ethernet.md` | [ ] |
@@ -75,6 +75,7 @@ The 15 items in CLAUDE.md §12. Tick them in `notes/w17_interview.md`, not here.
 ./build/debug/apps/spine/spine      # week 1 demo
 ./build/debug/apps/cockpit/cockpit  # week 2 demo
 ./build/debug/apps/ipc_bench/ipc_bench  # week 3 benchmark
+./build/debug/apps/can_bus/can_bus      # week 4 arbitration + bus-off demo
 sudo ./scripts/setup_vcan.sh      # vcan0, from week 4
 ```
 
