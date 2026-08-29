@@ -3,6 +3,10 @@
 > Bản tiếng Việt của [w04_can.md](w04_can.md). Thuật ngữ kỹ thuật giữ nguyên
 > tiếng Anh, vì đó là từ bạn sẽ gặp trong datasheet, trong tài liệu ISO, và
 > trong phòng phỏng vấn.
+>
+> **Chưa từng học CAN?** Đọc [w04_can_basics_vi.md](w04_can_basics_vi.md) trước
+> — nó dựng lý thuyết từ số 0. File này giả định bạn đã biết bus là gì,
+> dominant/recessive là gì, và một CAN frame gồm những trường nào.
 
 ## 1. Khái niệm
 
