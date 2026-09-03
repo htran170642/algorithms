@@ -41,6 +41,29 @@
 - [x] LC 560 - Subarray Sum Equals K
 - [x] LC 128 - Longest Consecutive Sequence
 
+#	LC	Bài	Level	Pattern
+1	136	Single Number	Easy	Hash/XOR
+2	202	Happy Number	Easy	Hash Set/Cycle
+
+3	205	Isomorphic Strings	Easy	Hash Map
+4	219	Contains Duplicate II	Easy	Map + Index
+5	290	Word Pattern	Easy	Bidirectional Map
+6	350	Intersection of Two Arrays II	Easy	Frequency Map
+7	387	First Unique Character	Easy	Frequency Map
+8	299	Bulls and Cows	Medium	Frequency
+9	36	Valid Sudoku	Medium	Hash Set
+10	380	Insert Delete GetRandom O(1)	Medium	Map + Array
+11	347	Top K Frequent Elements	Medium	Map + Heap/Bucket
+12	454	4Sum II	Medium	Hash Map
+13	525	Contiguous Array	Medium	Prefix Sum + Map
+14	523	Continuous Subarray Sum	Medium	Prefix Sum + Map
+15	974	Subarray Sums Divisible by K	Medium	Prefix Sum + Map
+16	930	Binary Subarrays With Sum	Medium	Prefix Sum + Map
+17	451	Sort Characters By Frequency	Medium	Frequency + Bucket
+18	442	Find All Duplicates in an Array	Medium	Frequency/In-place
+19	287	Find the Duplicate Number	Medium	Floyd Cycle
+20	75	Sort Colors	Medium	Array + Two Pointers
+
 ## Review
 
 ### Patterns Learned
