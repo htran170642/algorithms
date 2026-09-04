@@ -47,6 +47,7 @@
 
 3	205	Isomorphic Strings	Easy	Hash Map
 4	219	Contains Duplicate II	Easy	Map + Index
+
 5	290	Word Pattern	Easy	Bidirectional Map
 6	350	Intersection of Two Arrays II	Easy	Frequency Map
 7	387	First Unique Character	Easy	Frequency Map
