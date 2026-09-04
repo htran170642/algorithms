@@ -22,7 +22,7 @@ implemented, debugged and defended* — not when the code compiles.
 | 2 | Cockpit thread model | `av_conc`: `BoundedQueue<T>` (ring buffer, close-then-drain) · `cockpit` demo: rx/decode/ui threads, drop-oldest backpressure, ordered shutdown · TSan green | — | [`w02_threads.md`](notes/w02_threads.md) · [vi](notes/w02_threads_vi.md) | [x] |
 | 3 | Linux IPC | `av_ipc`: `UniqueFd` · `UnixSocket` (SEQPACKET) · `Poller` (epoll) · `SharedRing` (shm, SPSC lock-free) · `ipc_bench`: **10x** median, 12x p99 | deferred to wk 5 | [`w03_ipc.md`](notes/w03_ipc.md) · [vi](notes/w03_ipc_vi.md) | [x] |
 | 4 | CAN fundamentals | `av_can`: bit-by-bit arbitration simulator (wired-AND, RTR/SRR/IDE tie-breakers) · `ErrorCounters` active/passive/bus-off + recovery · `can_bus` demo: 6 scenarios, 4 faults | — | [`w04_can.md`](notes/w04_can.md) · [vi](notes/w04_can_vi.md) · [nền tảng](notes/w04_can_basics_vi.md) | [x] |
-| 5 | SocketCAN | `sim_vehicle` → `vcan0` → C++ receiver over `PF_CAN` | kernel `net/can/raw.c` · `Documentation/networking/can.rst` | `w05_socketcan.md` | [ ] |
+| 5 | SocketCAN | `av_can`: `CanSocket` (`PF_CAN`, ifindex bind, kernel filters, FD mode, `CAN_RAW_ERR_FILTER` → week 4's TEC/REC) · `sim_vehicle` 10 Hz → `vcan0` → `can_rx` (week-3 epoll + week-1 decode + staleness) | deferred: `candump.c` | [`w05_socketcan.md`](notes/w05_socketcan.md) | [~] |
 | 6 | CAN-FD + DBC | `.dbc` parser · all 7 signals of CLAUDE.md §7 decoded · BRS / 64-byte payload | — | `w06_dbc.md` | [ ] |
 | 7 | Automotive Ethernet | UDP/multicast · **100BASE-T1 vs office Ethernet** · VLAN · QoS · PTP | — | `w07_ethernet.md` | [ ] |
 | 8 | SOME/IP wire format | header · serialisation · request/response vs event · round-trip tests | `vsomeip` (COVESA) | `w08_someip.md` | [ ] |
@@ -76,7 +76,11 @@ The 15 items in CLAUDE.md §12. Tick them in `notes/w17_interview.md`, not here.
 ./build/debug/apps/cockpit/cockpit  # week 2 demo
 ./build/debug/apps/ipc_bench/ipc_bench  # week 3 benchmark
 ./build/debug/apps/can_bus/can_bus      # week 4 arbitration + bus-off demo
-sudo ./scripts/setup_vcan.sh      # vcan0, from week 4
+
+sudo ./scripts/setup_vcan.sh                       # vcan0 — REQUIRED from week 5, once per boot
+./build/debug/apps/sim_vehicle/sim_vehicle vcan0    # week 5 transmitter
+./build/debug/apps/can_rx/can_rx vcan0             # week 5 receiver
+candump -tz vcan0                                  # compare against the industry tool
 ```
 
 | Dependency | Status |
@@ -85,7 +89,7 @@ sudo ./scripts/setup_vcan.sh      # vcan0, from week 4
 | clang-tidy 18 | installed |
 | Qt 6.11.1 | installed at `~/Qt/6.11.1/gcc_64` — set `CMAKE_PREFIX_PATH` in week 11 |
 | `vcan` / `can-raw` kernel modules | present |
-| `can-utils` | **missing** — `sudo apt install can-utils` before week 4 |
+| `can-utils` | installed — `candump`, `cansend`, `cangen` in `/usr/bin` |
 | `cppcheck`, `clang-format` | missing — optional, `check.sh` skips them |
 
 TSan runs tests under `setarch -R`: kernel 6.x defaults to

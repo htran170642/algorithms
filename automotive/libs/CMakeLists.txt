@@ -16,7 +16,9 @@
 # spine first (CLAUDE.md section 14). Bit/endianness helpers live in it rather
 # than a separate av_core: outside a CAN payload they have no meaning.
 
+# av_ipc is listed before av_can because week 5 gives av_can a SocketCAN
+# endpoint that reuses av_ipc's UniqueFd rather than growing a second one.
 add_subdirectory(av_log)
-add_subdirectory(av_can)
 add_subdirectory(av_conc)
 add_subdirectory(av_ipc)
+add_subdirectory(av_can)

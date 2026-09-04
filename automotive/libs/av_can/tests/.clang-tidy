@@ -11,11 +11,20 @@
 # Every EXPECT_ macro becomes a branch, and a lambda passed to std::thread adds
 # a nesting multiplier on top, so a short and perfectly clear test can score
 # above 25. The check stays at 25 where the number means what it says.
+#
+# cppcoreguidelines-macro-usage and -avoid-do-while: a test that must skip
+# itself has to expand to `GTEST_SKIP() << ...; return;` at the call site. A
+# function cannot do that -- returning from a helper returns from the helper.
+# The `do { } while (false)` wrapper is the standard way to make such a macro
+# behave like a single statement. Both checks are right in general and
+# inapplicable here.
 
 InheritParentConfig: true
 
 Checks: >
-  -bugprone-unchecked-optional-access
+  -bugprone-unchecked-optional-access,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-avoid-do-while
 
 CheckOptions:
   - key: readability-function-cognitive-complexity.Threshold

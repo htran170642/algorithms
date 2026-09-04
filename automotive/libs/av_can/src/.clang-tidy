@@ -1,0 +1,14 @@
+# Library-source overrides for av_can. Everything else is inherited from the
+# root .clang-tidy.
+#
+# cppcoreguidelines-pro-type-union-access: the kernel's `struct can_frame` and
+# `struct canfd_frame` in <linux/can.h> declare their length field inside an
+# anonymous union (can_dlc / len / __pad share storage). That layout is the
+# ABI -- it is what read() and write() actually move -- so there is no variant
+# to reach for and no way to name the field without touching the union. The
+# check stays on everywhere else, where a union really is a design choice.
+
+InheritParentConfig: true
+
+Checks: >
+  -cppcoreguidelines-pro-type-union-access
