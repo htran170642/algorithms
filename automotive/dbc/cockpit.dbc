@@ -1,0 +1,36 @@
+VERSION "cockpit-dc-lab 0.1"
+
+
+NS_ :
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	BA_DEF_DEF_
+
+BS_:
+
+BU_ ECU_Powertrain ECU_Body Cluster
+
+
+BO_ 256 EngineData: 8 ECU_Powertrain
+ SG_ VehicleSpeed : 0|16@1+ (0.01,0) [0|655.35] "km/h" Cluster
+ SG_ EngineRpm : 16|16@1+ (0.25,0) [0|16383.75] "rpm" Cluster
+ SG_ CoolantTemp : 32|8@1+ (1,-40) [-40|215] "degC" Cluster
+ SG_ FuelLevel : 40|8@1+ (0.5,0) [0|127.5] "%" Cluster
+
+BO_ 512 BodyState: 8 ECU_Body
+ SG_ SteeringAngle : 0|16@1- (0.1,0) [-3276.8|3276.7] "deg" Cluster
+ SG_ DoorStatus : 16|4@1+ (1,0) [0|15] "" Cluster
+ SG_ WarningStatus : 24|8@1+ (1,0) [0|255] "" Cluster
+
+
+
+CM_ BO_ 256 "Powertrain cyclic data, 100 ms";
+CM_ SG_ 256 VehicleSpeed "Filtered road speed, not wheel speed";
+CM_ SG_ 256 CoolantTemp "Offset -40 keeps the raw byte unsigned";
+CM_ BO_ 512 "Body cyclic data, 100 ms";
+CM_ SG_ 512 DoorStatus "Bit 0 driver, 1 passenger, 2 rear left, 3 rear right";
+
+VAL_ 512 DoorStatus 0 "AllClosed" 1 "DriverOpen" 2 "PassengerOpen" 4 "RearLeftOpen" 8 "RearRightOpen" ;
+VAL_ 512 WarningStatus 0 "None" 1 "CheckEngine" 2 "LowFuel" 4 "Overheat" 8 "BrakeFault" ;

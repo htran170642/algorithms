@@ -1,23 +1,24 @@
-// The receiver: a CAN socket inside week 3's epoll loop.
+// The receiver: a CAN socket, week 3's epoll loop, and a DBC file.
 //
-//     vcan0 --read()--> CanFrame --decode()--> physical value
-//       |
+//     cockpit.dbc ──►  what to expect, and what it means
+//                              │
+//     vcan0 ──read()──► CanFrame ──decode()──► physical value + name
+//       │
 //     Poller (epoll)  <- unchanged from week 3; a CAN socket is just an fd
 //
-// Three things this demo is really about:
+// Week 6 changes three things about the receiver:
 //
-//   1. **Kernel-side filtering.** The socket asks for 0x100 and 0x200 only.
-//      Everything else is dropped before it is ever copied to this process.
-//   2. **Timeout as a first-class state.** A signal that stops arriving is not
-//      the same as a signal reading zero. The receiver must be able to say
-//      "stale" -- CLAUDE.md section 7's `Fault -> Detection -> ... -> Safe
-//      State`, at the earliest point in the chain where it is detectable.
-//   3. **Bus errors are readable.** With CAN_RAW_ERR_FILTER on, week 4's TEC
-//      and REC arrive through this same loop. The bus-off that ends week 4 is
-//      no longer silent here.
+//   1. **The filter set comes from the DBC.** Whatever messages the database
+//      declares are the messages the kernel is asked for. Nothing hardcoded.
+//   2. **Range violations are visible.** decode() still returns an
+//      out-of-range value -- it is a fact about the bus -- and the receiver
+//      logs it as a fault rather than hiding it.
+//   3. **Enumerations are named.** A DoorStatus of 1 prints as "DriverOpen",
+//      because the DBC's VAL_ table says so.
 //
-//   ./can_rx                # vcan0, forever
-//   ./can_rx vcan0 40       # stop after 40 data frames
+//   ./can_rx                          # vcan0, dbc/cockpit.dbc
+//   ./can_rx vcan0 40                 # stop after 40 data frames
+//   ./can_rx vcan0 40 other.dbc
 
 #include <chrono>
 #include <csignal>
@@ -27,13 +28,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
+#include "av/can/dbc.hpp"
 #include "av/can/frame.hpp"
-#include "av/can/signal.hpp"
 #include "av/can/socket.hpp"
 #include "av/ipc/poller.hpp"
 #include "av/log.hpp"
-#include "vehicle_signals.hpp"
 
 namespace {
 
@@ -42,23 +43,19 @@ namespace log = av::log;
 using av::can::CanFilter;
 using av::can::CanFrame;
 using av::can::CanSocket;
-using av::can::decode;
+using av::can::DbcDatabase;
 using av::can::FrameKind;
 using av::can::SocketStatus;
 using av::ipc::Poller;
 
-/// A handler takes no user data, so the flag has nowhere else to live. This is
-/// the one case where the guideline against non-const globals offers no
-/// alternative.
+/// A handler takes no user data, so the flag has nowhere else to live.
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile std::sig_atomic_t g_stop = 0;
 
 extern "C" void on_signal(int /*signum*/) { g_stop = 1; }
 
 /// How long a signal may go unheard before it is reported stale. The
-/// transmitter runs at 10 Hz, so 500 ms is five missed cycles -- late enough
-/// not to fire on jitter, early enough that a driver would not yet have acted
-/// on the stale value.
+/// transmitter runs at 10 Hz, so 500 ms is five missed cycles.
 constexpr auto kStaleAfter = std::chrono::milliseconds{500};
 
 /// Renders the frame the way `candump vcan0` does, so this output and the
@@ -75,24 +72,35 @@ std::string candump_line(const std::string& interface, const CanFrame& frame) {
     return os.str();
 }
 
-/// Decodes every signal of whichever message this is.
+/// Decodes and reports every signal the DBC declares for this message.
 ///
-/// A signal that does not fit is logged as unavailable rather than substituted
-/// with zero. Week 1's rule, still holding: absence is not zero.
-template <typename Table>
-void report(const Table& table, const CanFrame& frame) {
-    for (const auto& spec : table) {
-        const auto value = decode(spec, frame);
-        if (value) {
-            log::info("can.rx", "signal", "name", spec.name, "value", *value, "unit", spec.unit);
+/// Three outcomes, three different log lines. Collapsing them would lose the
+/// distinction that matters when something goes wrong.
+void report(const av::can::DbcMessage& message, const CanFrame& frame) {
+    for (const auto& signal : message.signals) {
+        const auto value = signal.decode(frame);
+        if (!value) {
+            log::warn("can.rx", "signal unavailable", "message", message.name, "signal",
+                      signal.name, "reason", "does not fit this frame");
+            continue;
+        }
+        if (!signal.in_range(*value)) {
+            // Not dropped, not clamped: reported. The DBC says this cannot
+            // happen, and it just did.
+            log::error("can.rx", "signal out of range", "signal", signal.name, "value", *value,
+                       "min", signal.minimum, "max", signal.maximum);
+            continue;
+        }
+        const auto name = signal.value_name(*value);
+        if (name.empty()) {
+            log::info("can.rx", "signal", "name", signal.name, "value", *value, "unit",
+                      signal.unit);
         } else {
-            log::warn("can.rx", "signal unavailable", "name", spec.name, "reason",
-                      "does not fit this frame");
+            log::info("can.rx", "signal", "name", signal.name, "value", *value, "means", name);
         }
     }
 }
 
-/// What the loop knows between iterations.
 struct ReceiverState {
     std::uint64_t received{0};
     bool stale{false};
@@ -100,10 +108,8 @@ struct ReceiverState {
 };
 
 /// Reads everything queued on the socket, then returns.
-///
-/// Level-triggered epoll forgives a partial drain, but draining fully here
-/// keeps one busy sender from starving the staleness check in the outer loop.
-void drain(CanSocket& socket, const std::string& interface, ReceiverState& state) {
+void drain(CanSocket& socket, const std::string& interface, const DbcDatabase& database,
+           ReceiverState& state) {
     while (true) {
         const auto result = socket.receive();
         if (result.status != SocketStatus::Ok) {
@@ -111,7 +117,6 @@ void drain(CanSocket& socket, const std::string& interface, ReceiverState& state
         }
 
         if (result.kind == FrameKind::BusError) {
-            // The evidence week 4 said to look for, arriving by itself.
             log::error("can.rx", "bus error", "classes", result.error.classes, "tec",
                        unsigned{result.error.transmit_errors}, "rec",
                        unsigned{result.error.receive_errors}, "bus_off", result.error.bus_off,
@@ -129,11 +134,18 @@ void drain(CanSocket& socket, const std::string& interface, ReceiverState& state
 
         std::cout << candump_line(interface, result.frame) << '\n' << std::flush;
 
-        if (result.frame.id == av::demo::kEngineDataId) {
-            report(av::demo::kEngineData, result.frame);
-        } else if (result.frame.id == av::demo::kBodyStateId) {
-            report(av::demo::kBodyState, result.frame);
+        const auto* message = database.find(result.frame.id, result.frame.extended);
+        if (message == nullptr) {
+            // Reachable only if the filters were widened by hand. Worth a line:
+            // an unknown id on a bus you thought you knew is information.
+            log::warn("can.rx", "no DBC entry for this id", "id", result.frame.id);
+            continue;
         }
+        if (result.frame.length < message->length) {
+            log::warn("can.rx", "frame shorter than the DBC says", "message", message->name,
+                      "expected", unsigned{message->length}, "got", unsigned{result.frame.length});
+        }
+        report(*message, result.frame);
     }
 }
 
@@ -144,10 +156,15 @@ int main(int argc, char** argv) {
 
     const std::string interface = (argc > 1) ? argv[1] : "vcan0";
     const std::uint64_t limit = (argc > 2) ? std::strtoull(argv[2], nullptr, 10) : 0U;
+    const std::string dbc_path = (argc > 3) ? argv[3] : AV_DBC_PATH;
 
-    // signal() returns the previous handler; nothing useful to do with it here.
     static_cast<void>(std::signal(SIGINT, on_signal));
     static_cast<void>(std::signal(SIGTERM, on_signal));
+
+    const auto database = DbcDatabase::load(dbc_path);
+    if (!database) {
+        return 1;
+    }
 
     auto socket = CanSocket::open(interface);
     if (!socket) {
@@ -158,37 +175,53 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Week 4's counters, delivered as ordinary reads. Off by default, which is
-    // why so much production code never notices a controller degrading.
+    // Week 4's counters, delivered as ordinary reads.
     static_cast<void>(socket->enable_error_frames());
 
-    // Two ids, exact match. Everything else the bus carries is discarded in
-    // the kernel and never wakes this process at all.
-    if (!socket->set_filters({
-            CanFilter{av::demo::kEngineDataId, av::can::kStandardIdMask, false},
-            CanFilter{av::demo::kBodyStateId, av::can::kStandardIdMask, false},
-        })) {
+    // The DBC decides what this receiver listens to. Everything else the bus
+    // carries is discarded in the kernel and never wakes this process.
+    std::vector<CanFilter> filters;
+    filters.reserve(database->messages().size());
+    for (const auto& message : database->messages()) {
+        filters.push_back(CanFilter{
+            message.id,
+            message.extended ? av::can::kExtendedIdMask : av::can::kStandardIdMask,
+            message.extended});
+    }
+    if (!socket->set_filters(filters)) {
         return 1;
     }
 
     auto poller = Poller::create();
-    if (!poller || !poller->watch_readable(socket->fd())) {
-        log::error("can.rx", "could not set up epoll");
+    if (!poller) {
+        log::error("can.rx", "could not create epoll");
         return 1;
     }
 
-    log::info("can.rx", "listening", "interface", interface, "filters", 2, "stale_after_ms",
-              kStaleAfter.count());
+    // Bind once, after the checks. Dereferencing the optionals inside the loop
+    // is what the unchecked-optional-access analysis rightly objects to: it
+    // cannot see that an early return already guaranteed they hold a value,
+    // and a `||` short-circuit hides it further.
+    CanSocket& can = *socket;
+    const DbcDatabase& db = *database;
+    Poller& epoll = *poller;
+
+    if (!epoll.watch_readable(can.fd())) {
+        log::error("can.rx", "could not watch the CAN socket");
+        return 1;
+    }
+
+    log::info("can.rx", "listening", "interface", interface, "dbc", dbc_path, "filters",
+              filters.size(), "stale_after_ms", kStaleAfter.count());
 
     ReceiverState state;
 
     while (g_stop == 0 && (limit == 0U || state.received < limit)) {
-        // A CAN socket is an ordinary descriptor: the week-3 loop is unchanged.
-        const auto& events = poller->wait(std::chrono::milliseconds{100});
+        const auto& events = epoll.wait(std::chrono::milliseconds{100});
 
         for (const auto& event : events) {
             if (event.readable) {
-                drain(*socket, interface, state);
+                drain(can, interface, db, state);
             }
         }
 

@@ -6,11 +6,11 @@
 #   can_bus   week 4   arbitration bit by bit, and one ECU driven to bus-off
 #   sim_vehicle week 5 encodes the seven signals onto a real vcan0 interface
 #   can_rx    week 5   epoll + PF_CAN + decode, with staleness detection
+#             week 6   ... both now driven by dbc/cockpit.dbc
 #
-# common/ is not a demo: it is the SignalSpec table sim_vehicle and can_rx
-# share, so the two cannot drift apart. Week 6 replaces it with a .dbc file.
-
-add_subdirectory(common)
+# common/ held the SignalSpec table these two shared. Week 6 deleted it: they
+# read the same .dbc file instead, which is how a real project keeps two ECUs
+# in agreement.
 
 add_subdirectory(spine)
 add_subdirectory(cockpit)
