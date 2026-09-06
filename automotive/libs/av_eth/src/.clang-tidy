@@ -1,0 +1,27 @@
+# Overrides for the directory that talks directly to the BSD sockets API.
+#
+# Identical in spirit to libs/av_ipc/src/.clang-tidy, and for the same reason:
+# bind(), sendto() and recvfrom() are declared in terms of `struct sockaddr*`,
+# and the only way to pass a `sockaddr_in` to them is a reinterpret_cast.
+# static_cast cannot do it, and a union would hide the same cast behind more
+# code. The check stays enabled everywhere else.
+
+InheritParentConfig: true
+
+# misc-include-cleaner asks for the header that *declares* a symbol. glibc
+# declares socklen_t, SOL_SOCKET and SO_REUSEADDR in <bits/socket.h> and
+# <bits/types/socklen_t.h> -- private headers a program must never include --
+# and reaches them from <sys/socket.h>, which this file does include. The
+# check reports them as missing anyway, and asks for an include that cannot
+# legally be written.
+#
+# It fires here and not in libs/av_can/src, which uses socklen_t with the same
+# <sys/socket.h>; the difference is this file's <arpa/inet.h> / <netinet/in.h>,
+# which reach the same declarations by another path. IgnoreHeaders was tried
+# and does not apply -- it filters unused-include reports, not missing-include
+# ones. Scattered NOLINTs were the alternative: socklen_t appears at six call
+# sites here, so one directory-level line is the smaller cost. The check stays
+# on for every other library, including the other socket code.
+Checks: >
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -misc-include-cleaner

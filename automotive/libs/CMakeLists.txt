@@ -6,6 +6,7 @@
 #               week 6   ... plus a DBC parser
 #   av_conc     week 2   BoundedQueue -- between threads
 #   av_ipc      week 3   epoll, Unix domain socket, shared memory  <- here
+#   av_eth      week 7   UDP + IPv4 multicast -- the automotive Ethernet link
 #   av_service  week 8   mini SOME/IP + VehicleService
 #
 # av_conc and av_ipc stay separate on purpose: one crosses a thread boundary,
@@ -22,3 +23,8 @@ add_subdirectory(av_log)
 add_subdirectory(av_conc)
 add_subdirectory(av_ipc)
 add_subdirectory(av_can)
+
+# av_eth reuses av_ipc's UniqueFd too. It stays separate from av_can because
+# the two answer different questions: av_can is *what a signal means*, av_eth
+# is *how bytes reach another ECU*. Week 8's SOME/IP sits on top of av_eth.
+add_subdirectory(av_eth)
