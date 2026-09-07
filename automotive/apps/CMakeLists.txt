@@ -18,3 +18,10 @@ add_subdirectory(ipc_bench)
 add_subdirectory(can_bus)
 add_subdirectory(sim_vehicle)
 add_subdirectory(can_rx)
+
+# Week 7. eth_gw generates (or forwards) CAN frames onto a multicast group;
+# eth_sub joins it and decodes them with the same DBC. Run eth_gw --reorder 4
+# against eth_sub and then against eth_sub --naive: the difference on screen is
+# the whole reason a sequence number exists.
+add_subdirectory(eth_gw)
+add_subdirectory(eth_sub)

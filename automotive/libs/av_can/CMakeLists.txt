@@ -6,6 +6,7 @@ add_library(av_can
     src/error_state.cpp
     src/socket.cpp
     src/dbc.cpp
+    src/tunnel.cpp
 )
 
 target_include_directories(av_can PUBLIC include)
@@ -21,6 +22,10 @@ av_add_test(av_can_frame_test       SOURCES tests/frame_test.cpp       LIBS av_c
 av_add_test(av_can_signal_test      SOURCES tests/signal_test.cpp      LIBS av_can)
 av_add_test(av_can_arbitration_test SOURCES tests/arbitration_test.cpp LIBS av_can)
 av_add_test(av_can_error_state_test SOURCES tests/error_state_test.cpp LIBS av_can)
+
+# Week 7's wire format. Pure functions and one small state machine, so no
+# network is needed -- the socket half is tested in libs/av_eth.
+av_add_test(av_can_tunnel_test      SOURCES tests/tunnel_test.cpp      LIBS av_can)
 
 # Needs a vcan0 interface. Every case that does skips itself when it is absent,
 # so a machine that has not run scripts/setup_vcan.sh still gets a green run.
