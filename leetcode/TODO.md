@@ -44,14 +44,15 @@
 #	LC	Bài	Level	Pattern
 1	136	Single Number	Easy	Hash/XOR
 2	202	Happy Number	Easy	Hash Set/Cycle
-
 3	205	Isomorphic Strings	Easy	Hash Map
 4	219	Contains Duplicate II	Easy	Map + Index
 
 5	290	Word Pattern	Easy	Bidirectional Map
 6	350	Intersection of Two Arrays II	Easy	Frequency Map
+
 7	387	First Unique Character	Easy	Frequency Map
 8	299	Bulls and Cows	Medium	Frequency
+
 9	36	Valid Sudoku	Medium	Hash Set
 10	380	Insert Delete GetRandom O(1)	Medium	Map + Array
 11	347	Top K Frequent Elements	Medium	Map + Heap/Bucket
