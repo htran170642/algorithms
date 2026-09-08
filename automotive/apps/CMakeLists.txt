@@ -25,3 +25,11 @@ add_subdirectory(can_rx)
 # the whole reason a sequence number exists.
 add_subdirectory(eth_gw)
 add_subdirectory(eth_sub)
+
+# Week 8. The same UDP transport, now carrying SOME/IP instead of a bespoke
+# format -- and carrying something week 7 could not express at all: a question
+# with an answer. svc_client calls GetSpeed() and waits; svc_server replies to
+# that one caller, and separately announces OnSpeedChanged to a group nobody
+# had to register with it.
+add_subdirectory(svc_server)
+add_subdirectory(svc_client)
