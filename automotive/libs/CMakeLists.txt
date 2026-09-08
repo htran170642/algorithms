@@ -28,3 +28,8 @@ add_subdirectory(av_can)
 # the two answer different questions: av_can is *what a signal means*, av_eth
 # is *how bytes reach another ECU*. Week 8's SOME/IP sits on top of av_eth.
 add_subdirectory(av_eth)
+
+# av_service depends on neither av_eth nor av_can, and that is the point: the
+# SOME/IP header is a byte layout, not a transport and not a signal catalogue.
+# Week 9 is where Service Discovery finally binds a service to an endpoint.
+add_subdirectory(av_service)
