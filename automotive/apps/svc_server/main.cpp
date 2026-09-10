@@ -1,26 +1,35 @@
-// VehicleService, server side: answers methods and publishes events.
+// VehicleService, server side: answers methods, publishes events, and now
+// *offers itself* so nobody has to be told where it is.
 //
 //                    ┌──────────── svc_server ────────────┐
 //     GetSpeed()  ──►│ port 30509, unicast                 │──► Response
 //                    │                                     │
 //                    │ OnSpeedChanged, every 500 ms        │──► 239.10.0.2:30510
-//                    └─────────────────────────────────────┘        (multicast)
+//                    │                                     │
+//                    │ OfferService, every 1 s, TTL 3 s    │──► 239.10.0.9:30490
+//                    │ FindService ──────────────────────► │──► unicast offer
+//                    └─────────────────────────────────────┘
 //
-// One socket does both, and the asymmetry is the lesson:
+// Week 8 had the first two rows. The third is week 9, and it changes what the
+// server *is*: not a program listening on a port somebody hardcoded, but one
+// that publishes a lease on its own existence.
 //
-//   * A **method** is a conversation. Somebody asked, exactly one somebody
-//     gets the answer, and the answer echoes the Request ID so the asker can
-//     tell which of its outstanding questions this replies to.
-//   * An **event** is an announcement. Nobody asked, there is no reply, and
-//     the server does not know or care who is listening.
+//   * The offer carries **both endpoints** -- the unicast port for methods and
+//     the multicast group for events -- so a client needs neither constant.
+//   * The offer carries a **TTL**, and the server must keep renewing it. Kill
+//     the process and no message is sent saying so; the lease simply runs out
+//     and every client notices. That is how a crash becomes observable.
+//   * Ctrl-C sends a **StopOffer** (TTL 0) first. A clean shutdown says so, and
+//     clients react in milliseconds instead of waiting out the lease.
 //
-//   ./svc_server                 # answer methods, publish events
+//   ./svc_server                 # answer methods, publish events, offer itself
+//   ./svc_server --no-sd         # go silent on discovery -- the client never finds it
 //   ./svc_server --no-events     # methods only -- watch the client go quiet
 //   ./svc_server --wrong-version # answer with interface version 2
 //
-// Week 7 had only the second kind. Everything CAN can express is an
-// announcement; "ask a question and get an answer" has no CAN equivalent that
-// is not built by hand on top of two message ids.
+// Run it, kill it with Ctrl-C, and start it again while a client watches: the
+// client reports UNAVAILABLE within a millisecond of the StopOffer, then
+// AVAILABLE again -- and flags a reboot, because the session ids started over.
 
 #include <algorithm>
 #include <chrono>
@@ -28,18 +37,22 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "av/eth/udp_socket.hpp"
 #include "av/ipc/poller.hpp"
 #include "av/log.hpp"
+#include "av/service/sd.hpp"
 #include "av/service/someip.hpp"
 #include "av/service/vehicle_service.hpp"
 
 namespace {
 
 namespace log = av::log;
+namespace sd = av::service::sd;
 namespace vehicle = av::service::vehicle;
 
 using av::eth::Endpoint;
@@ -57,9 +70,20 @@ volatile std::sig_atomic_t g_stop = 0;
 
 extern "C" void on_signal(int /*signum*/) { g_stop = 1; }
 
+/// How often the offer is repeated, and how long each one is good for.
+///
+/// The TTL is three times the interval on purpose. Equal values would mean a
+/// single lost offer expires the lease and every client briefly believes the
+/// server died; a factor of three tolerates two consecutive losses. Larger
+/// still, and a real crash takes proportionally longer to notice. This ratio is
+/// the whole availability/responsiveness trade, and it is one number.
+constexpr auto kOfferInterval = std::chrono::seconds{1};
+constexpr std::uint32_t kOfferTtl = 3;
+
 struct Options {
     std::string interface_address{"127.0.0.1"};
     bool publish_events{true};
+    bool announce{true};
     /// Answer with an interface version the client does not expect, to show
     /// what a version mismatch looks like from both ends.
     bool wrong_version{false};
@@ -70,12 +94,15 @@ bool parse_options(int argc, char** argv, Options& out) {
         const std::string flag = argv[i];
         if (flag == "--no-events") {
             out.publish_events = false;
+        } else if (flag == "--no-sd") {
+            out.announce = false;
         } else if (flag == "--wrong-version") {
             out.wrong_version = true;
         } else if (flag == "--iface" && (i + 1) < argc) {
             out.interface_address = argv[++i];
         } else {
-            std::cerr << "usage: svc_server [--iface A] [--no-events] [--wrong-version]\n";
+            std::cerr << "usage: svc_server [--iface A] [--no-events] [--no-sd]"
+                      << " [--wrong-version]\n";
             return false;
         }
     }
@@ -207,6 +234,177 @@ void drain_requests(UdpSocket& udp, std::vector<std::uint8_t>& buffer, const Opt
     }
 }
 
+/// Everything the server does on the discovery socket.
+///
+/// It owns the SD socket by value: one object holds the file descriptor, the
+/// session counter and the address it advertises, and there is no way to renew
+/// a lease without it.
+class Announcer {
+public:
+    Announcer(UdpSocket socket, std::string advertised_address)
+        : socket_(std::move(socket)), advertised_address_(std::move(advertised_address)) {}
+
+    [[nodiscard]] int fd() const noexcept { return socket_.fd(); }
+
+    /// Repeats the offer to the SD group. Renewing the lease *is* the liveness
+    /// signal -- there is no separate heartbeat, and there does not need to be.
+    void announce(std::chrono::steady_clock::time_point now) {
+        if (now - last_offer_ < kOfferInterval) {
+            return;
+        }
+        last_offer_ = now;
+        const Endpoint group{sd::kGroup, sd::kPort};
+        if (send(offer(kOfferTtl), group)) {
+            std::cout << "[srv] OfferService  service=0x" << std::hex << vehicle::kServiceId
+                      << std::dec << "  ttl=" << kOfferTtl << "s  -> " << sd::kGroup << ":"
+                      << sd::kPort << '\n'
+                      << std::flush;
+        }
+    }
+
+    /// Withdraws the offer. TTL 0 is the only message that ever says "gone".
+    void stop_offer() {
+        const Endpoint group{sd::kGroup, sd::kPort};
+        if (send(offer(sd::kTtlStop), group)) {
+            std::cout << "[srv] StopOffer     ttl=0  -- clients drop this service now\n"
+                      << std::flush;
+        }
+    }
+
+    /// Reads FindService requests and answers each one directly.
+    ///
+    /// The unicast answer is why a client that starts after the server does not
+    /// have to wait up to a full offer interval: it asks, and is told.
+    void serve_finds(std::vector<std::uint8_t>& buffer) {
+        while (true) {
+            const auto result = socket_.receive(buffer);
+            if (result.status != SocketStatus::Ok) {
+                return;
+            }
+            const auto message = av::service::deserialize(buffer.data(), result.size);
+            if (!message || !sd::is_sd(message->header)) {
+                continue;
+            }
+            const auto payload =
+                sd::parse_payload(message->payload.data(), message->payload.size());
+            if (!payload) {
+                continue;
+            }
+            for (const auto& entry : payload->entries) {
+                if (wanted(entry)) {
+                    answer_find(result.from);
+                }
+            }
+        }
+    }
+
+private:
+    /// True when this entry is a question this server can answer.
+    ///
+    /// Instance 0xFFFF means "any", which is what a client asks when it does
+    /// not care which of several identical ECUs replies.
+    static bool wanted(const sd::Entry& entry) {
+        return entry.type == sd::EntryType::FindService &&
+               entry.service_id == vehicle::kServiceId &&
+               (entry.instance_id == vehicle::kInstanceId || entry.instance_id == 0xFFFF);
+    }
+
+    void answer_find(const Endpoint& asker) {
+        if (send(offer(kOfferTtl), asker)) {
+            std::cout << "[srv] FindService from " << asker.address << ":" << asker.port
+                      << "  -> unicast OfferService\n"
+                      << std::flush;
+        }
+    }
+
+    /// The offer itself: what this server is, and the two places to reach it.
+    ///
+    /// These two options are the constants that used to be read by the client
+    /// out of vehicle_service.hpp. They are still written down once -- but by
+    /// the server, which is the only process that actually knows them.
+    [[nodiscard]] sd::Message offer(std::uint32_t ttl) const {
+        sd::Option method;
+        method.type = sd::OptionType::Ipv4Endpoint;
+        method.address = advertised_address_;
+        method.protocol = sd::Layer4::Udp;
+        method.port = vehicle::kMethodPort;
+
+        sd::Option events;
+        events.type = sd::OptionType::Ipv4Multicast;
+        events.address = vehicle::kEventGroup;
+        events.protocol = sd::Layer4::Udp;
+        events.port = vehicle::kEventPort;
+
+        sd::Entry entry;
+        entry.type = sd::EntryType::OfferService;
+        entry.service_id = vehicle::kServiceId;
+        entry.instance_id = vehicle::kInstanceId;
+        entry.major_version = vehicle::kInterfaceVersion;
+        entry.ttl = ttl;
+        entry.options = {method, events};
+
+        sd::Message message;
+        // True until the session id wraps, which in a demo it never does. A
+        // receiver must therefore not read the flag alone as "it rebooted": it
+        // means "this sender has not been up long enough to wrap", and only a
+        // session id that went *backwards* alongside it proves a restart.
+        message.reboot = true;
+        message.unicast = true;
+        message.entries = {entry};
+        return message;
+    }
+
+    bool send(const sd::Message& message, const Endpoint& to) {
+        std::vector<std::uint8_t> wire;
+        if (!sd::serialize(message, sessions_.next(), wire)) {
+            return false;
+        }
+        return socket_.send_to(to, wire.data(), wire.size()) == SocketStatus::Ok;
+    }
+
+    UdpSocket socket_;
+    std::string advertised_address_;
+    av::service::SessionCounter sessions_;
+    std::chrono::steady_clock::time_point last_offer_;
+};
+
+/// Opens the socket that both answers methods and publishes events.
+///
+/// One socket for two directions: replies go back to whoever asked, events go
+/// to a group. Neither needs a socket of its own, because the server only ever
+/// *sends* outward on this fd.
+std::optional<UdpSocket> open_method_socket(const Options& options) {
+    auto socket = UdpSocket::open();
+    if (!socket) {
+        return std::nullopt;
+    }
+    if (!socket->set_non_blocking() || !socket->bind_any(vehicle::kMethodPort)) {
+        return std::nullopt;
+    }
+    if (!socket->set_multicast_interface(options.interface_address) ||
+        !socket->set_multicast_ttl(1) || !socket->set_multicast_loopback(true)) {
+        log::error("svc.server", "could not configure multicast for events");
+        return std::nullopt;
+    }
+    return socket;
+}
+
+/// Opens the discovery socket: bound to the SD port, joined to the SD group,
+/// and configured to send there too.
+std::optional<UdpSocket> open_sd_socket(const std::string& interface_address) {
+    auto socket = UdpSocket::open();
+    if (!socket) {
+        return std::nullopt;
+    }
+    if (!socket->set_non_blocking() || !socket->bind_any(sd::kPort) ||
+        !socket->join_multicast(sd::kGroup, interface_address) ||
+        !socket->set_multicast_interface(interface_address) || !socket->set_multicast_ttl(1) ||
+        !socket->set_multicast_loopback(true)) {
+        return std::nullopt;
+    }
+    return socket;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -220,17 +418,19 @@ int main(int argc, char** argv) {
     static_cast<void>(std::signal(SIGINT, on_signal));
     static_cast<void>(std::signal(SIGTERM, on_signal));
 
-    auto socket = UdpSocket::open();
+    auto socket = open_method_socket(options);
     if (!socket) {
         return 1;
     }
-    if (!socket->set_non_blocking() || !socket->bind_any(vehicle::kMethodPort)) {
-        return 1;
-    }
-    if (!socket->set_multicast_interface(options.interface_address) ||
-        !socket->set_multicast_ttl(1) || !socket->set_multicast_loopback(true)) {
-        log::error("svc.server", "could not configure multicast for events");
-        return 1;
+
+    std::optional<Announcer> announcer;
+    if (options.announce) {
+        auto sd_socket = open_sd_socket(options.interface_address);
+        if (!sd_socket) {
+            log::error("svc.server", "could not open the discovery socket");
+            return 1;
+        }
+        announcer.emplace(std::move(*sd_socket), options.interface_address);
     }
 
     auto poller = Poller::create();
@@ -243,10 +443,14 @@ int main(int argc, char** argv) {
     if (!epoll.watch_readable(udp.fd())) {
         return 1;
     }
+    if (announcer && !epoll.watch_readable(announcer->fd())) {
+        return 1;
+    }
 
-    log::info("svc.server", "offering", "service", vehicle::kServiceId, "method_port",
-              vehicle::kMethodPort, "event_group", vehicle::kEventGroup, "event_port",
-              vehicle::kEventPort, "events", options.publish_events);
+    log::info("svc.server", "offering", "service", vehicle::kServiceId, "instance",
+              vehicle::kInstanceId, "method_port", vehicle::kMethodPort, "event_group",
+              vehicle::kEventGroup, "event_port", vehicle::kEventPort, "events",
+              options.publish_events, "sd", options.announce);
 
     av::service::SessionCounter events;
     std::vector<std::uint8_t> buffer;
@@ -256,8 +460,13 @@ int main(int argc, char** argv) {
     while (g_stop == 0) {
         const auto& ready = epoll.wait(std::chrono::milliseconds{100});
         for (const auto& event : ready) {
-            if (event.readable) {
+            if (!event.readable) {
+                continue;
+            }
+            if (event.fd == udp.fd()) {
                 drain_requests(udp, buffer, options, tick);
+            } else if (announcer) {
+                announcer->serve_finds(buffer);
             }
         }
 
@@ -266,9 +475,18 @@ int main(int argc, char** argv) {
             last_event = now;
             publish(udp, events.next(), tick);
         }
+        if (announcer) {
+            announcer->announce(now);
+        }
         ++tick;
     }
 
+    // Say goodbye before the socket closes. Without this the clients are
+    // correct but slow: they would learn the same fact from the lease running
+    // out, up to kOfferTtl seconds later.
+    if (announcer) {
+        announcer->stop_offer();
+    }
     log::info("svc.server", "stopped");
     return 0;
 }
