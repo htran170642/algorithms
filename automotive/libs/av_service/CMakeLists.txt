@@ -1,5 +1,6 @@
 add_library(av_service
     src/someip.cpp
+    src/sd.cpp
 )
 
 target_include_directories(av_service PUBLIC include)
@@ -15,4 +16,11 @@ target_link_libraries(av_service
 # Pure functions over byte buffers: no socket, no vcan0, nothing to skip.
 av_add_test(av_service_someip_test
     SOURCES tests/someip_test.cpp
+    LIBS av_service)
+
+# Service Discovery, including its TTL state machine. The clock is a parameter
+# rather than a call to now(), so expiry is tested in microseconds instead of
+# by sleeping through a lease.
+av_add_test(av_service_sd_test
+    SOURCES tests/sd_test.cpp
     LIBS av_service)

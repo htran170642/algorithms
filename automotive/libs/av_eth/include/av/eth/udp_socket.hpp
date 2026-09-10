@@ -109,6 +109,16 @@ public:
     /// subscriber is simply silent.
     bool join_multicast(std::string_view group, std::string_view interface_address = "0.0.0.0");
 
+    /// Leaves a group: IP_DROP_MEMBERSHIP, and the switch stops forwarding.
+    ///
+    /// Closing the socket does this too, so it is easy to believe it is never
+    /// needed. It is needed the moment a subscriber outlives its subscription
+    /// -- week 9's client learns its event group from Service Discovery, and
+    /// when that service's lease expires the membership has to go with it.
+    /// Otherwise the client keeps receiving a group it is no longer entitled
+    /// to, and the switch keeps flooding a port that nobody is reading.
+    bool leave_multicast(std::string_view group, std::string_view interface_address = "0.0.0.0");
+
     /// Chooses the NIC that *outgoing* multicast leaves by. Separate from
     /// join_multicast() because sending and receiving are separate decisions.
     bool set_multicast_interface(std::string_view interface_address);

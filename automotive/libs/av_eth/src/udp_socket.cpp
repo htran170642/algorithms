@@ -112,6 +112,25 @@ bool UdpSocket::join_multicast(std::string_view group, std::string_view interfac
     return true;
 }
 
+bool UdpSocket::leave_multicast(std::string_view group, std::string_view interface_address) {
+    ip_mreq request{};
+    if (!parse_address(group, request.imr_multiaddr) ||
+        !parse_address(interface_address, request.imr_interface)) {
+        log::error("eth.udp", "bad address", "group", group, "interface", interface_address);
+        return false;
+    }
+
+    // The same struct as the join, and the same interface trap: dropping a
+    // membership on the wrong NIC succeeds at doing nothing.
+    if (::setsockopt(fd_.get(), IPPROTO_IP, IP_DROP_MEMBERSHIP, &request,
+                     static_cast<socklen_t>(sizeof(request))) < 0) {
+        log::error("eth.udp", "IP_DROP_MEMBERSHIP failed", "group", group, "interface",
+                   interface_address, "errno", errno);
+        return false;
+    }
+    return true;
+}
+
 bool UdpSocket::set_multicast_interface(std::string_view interface_address) {
     in_addr address{};
     if (!parse_address(interface_address, address)) {

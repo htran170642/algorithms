@@ -39,11 +39,28 @@ inline constexpr std::uint16_t kGetRpm = 0x0002;
 /// Bit 15 set: an event id, not a method id.
 inline constexpr std::uint16_t kOnSpeedChanged = 0x8001;
 
+/// Which copy of the service this is. The service id says *what* it is; the
+/// instance id says *which one*. Two identical rear displays, one interface,
+/// two instances -- and a client that wants "any of them" asks for 0xFFFF.
+inline constexpr std::uint16_t kInstanceId = 0x0001;
+
+// ---------------------------------------------------------------------------
+// Everything below this line is the *server's* configuration, not a contract.
+//
+// Week 8 had the client read these too, and that was the flaw week 9 removes:
+// an address is a deployment fact, not part of an interface. The server now
+// advertises them in its OfferService (see apps/svc_server), and the client
+// learns them at run time -- so a service that moves, boots late, or is not
+// fitted no longer requires recompiling anything.
+//
+// The ids above stay here, because *those* are the contract: they are the same
+// on every vehicle, and nobody discovers them.
+// ---------------------------------------------------------------------------
+
 /// Where requests are sent. Unicast: a request has exactly one recipient.
 inline constexpr std::uint16_t kMethodPort = 30509;
 
-/// Where events are published. In a full stack these would be *learned* from
-/// Service Discovery rather than compiled in -- which is week 9.
+/// Where events are published.
 inline constexpr const char* kEventGroup = "239.10.0.2";
 inline constexpr std::uint16_t kEventPort = 30510;
 
