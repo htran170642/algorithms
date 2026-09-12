@@ -8,6 +8,8 @@
 #   av_ipc      week 3   epoll, Unix domain socket, shared memory  <- here
 #   av_eth      week 7   UDP + IPv4 multicast -- the automotive Ethernet link
 #   av_service  week 8   mini SOME/IP + VehicleService
+#               week 9   ... plus Service Discovery
+#   av_mw       week 10  the middleware: Runtime, Proxy, Skeleton
 #
 # av_conc and av_ipc stay separate on purpose: one crosses a thread boundary,
 # the other crosses an address space. Conflating them hides the difference that
@@ -33,3 +35,8 @@ add_subdirectory(av_eth)
 # SOME/IP header is a byte layout, not a transport and not a signal catalogue.
 # Week 9 is where Service Discovery finally binds a service to an endpoint.
 add_subdirectory(av_service)
+
+# av_mw is the first library that joins the others: it links av_service
+# PUBLIC (its headers name service ids) and av_eth + av_ipc PRIVATE (they do
+# not). An application links av_mw and nothing that opens a socket.
+add_subdirectory(av_mw)
