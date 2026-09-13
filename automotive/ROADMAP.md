@@ -28,7 +28,7 @@ implemented, debugged and defended* — not when the code compiles.
 | 8 | SOME/IP wire format | `av_service`: 16-byte header (Length counts from Request ID, big-endian) · `PayloadWriter/Reader` · `SessionCounter` wrapping to 1 · byte-pinned tests that caught a real offset bug a round-trip would have hidden · `svc_server`/`svc_client`: **method (unicast, echoes Request ID) vs event (multicast, nobody asked)** + `E_UNKNOWN_METHOD`, version mismatch, 300 ms timeout | deferred: `vsomeip` | [`w08_someip.md`](notes/w08_someip.md) · [vi](notes/w08_someip_vi.md) | [x] |
 | 9 | Service Discovery | `av_service`: SD entries + IPv4 options (Length declares 9, option occupies 12) · `ServiceRegistry` treating an offer as a **lease**, clock injected so expiry is tested in µs · `av_eth`: `leave_multicast` · `svc_server` offers cyclically, answers `FindService`, sends `StopOffer` on Ctrl-C · `svc_client` **starts before the server**, searches, learns both endpoints, joins the event group only once told: **StopOffer = 0 failed calls, `kill -9` = 2 calls and 3 s** · reboot detection, and the loopback bug the run found | deferred: `vsomeip` | [`w09_sd.md`](notes/w09_sd.md) · [vi](notes/w09_sd_vi.md) | [x] |
 | 10 | **Middleware architecture** | `av_mw`: `Runtime` owns **no thread** (`poll()` / `fd()`, pimpl) · `Proxy`: every call ends exactly once, never inside `call()`, no method retry (idempotency), `Busy` past 16, `NotAvailable` at once on withdrawal · `Skeleton`: offer ≠ construct, StopOffer in the destructor · `VehicleProxy/Skeleton` = what codegen emits · apps **711→216 / 492→139 lines**, link `av_mw` only, sockets unreachable · 10 integration tests on one thread · measured: unicast to an `SO_REUSEADDR` port reaches only the last-bound socket | deferred: `vsomeip` | [`w10_middleware.md`](notes/w10_middleware.md) · [vi](notes/w10_middleware_vi.md) | [x] |
-| 11 | Qt core | QObject · signals/slots · event loop · **demo: block the loop, freeze the UI, then fix it** | — | `w11_qt.md` | [ ] |
+| 11 | Qt core | `av_qt`: `LoopMonitor` turning "feels laggy" into `worst 3012 ms` · 10 tests pinning direct vs queued, self-disconnect on destruction, the context-object trap, one-way affinity · `qt_loop`: three buttons, **identical 3 s of work**, measured **3012 / 34 / 17 ms worst — and `p50` 15 ms in all three**, so a median never saw the freeze · Qt optional in the build, skipped under TSan (uninstrumented) · found by measuring: a blocked loop *loses* ticks (305→125), Qt never replays them | — | [`w11_qt.md`](notes/w11_qt.md) · [vi](notes/w11_qt_vi.md) | [x] |
 | 12 | C++ ↔ QML | `Q_PROPERTY` · `VehicleModel` · `QSocketNotifier` wiring the CAN fd into the event loop | Qt `QSocketNotifier` source | `w12_qml_bridge.md` | [ ] |
 | 13 | Cluster UI | QML bindings · speed · RPM · temperature · doors · warnings | — | `w13_cluster.md` | [ ] |
 | 14 | Capstone integration | full chain wired · **integration tests** separate from unit tests · end-to-end latency budget measured | — | `w14_capstone.md` | [ ] |
@@ -76,6 +76,7 @@ The 15 items in CLAUDE.md §12. Tick them in `notes/w17_interview.md`, not here.
 ./build/debug/apps/cockpit/cockpit  # week 2 demo
 ./build/debug/apps/ipc_bench/ipc_bench  # week 3 benchmark
 ./build/debug/apps/can_bus/can_bus      # week 4 arbitration + bus-off demo
+./build/debug/apps/qt_loop/qt_loop      # week 11 event loop: press 1, 2, 3
 
 sudo ./scripts/setup_vcan.sh                       # vcan0 — REQUIRED from week 5, once per boot
 ./build/debug/apps/sim_vehicle/sim_vehicle vcan0    # week 5 transmitter
@@ -87,7 +88,7 @@ candump -tz vcan0                                  # compare against the industr
 |---|---|
 | g++ 13.3 · CMake 4.4 · Ninja · GTest 1.14 | installed |
 | clang-tidy 18 | installed |
-| Qt 6.11.1 | installed at `~/Qt/6.11.1/gcc_64` — set `CMAKE_PREFIX_PATH` in week 11 |
+| Qt 6.11.1 | installed at `~/Qt/6.11.1/gcc_64` — found automatically by [cmake/Qt.cmake](cmake/Qt.cmake); optional, and skipped under TSan |
 | `vcan` / `can-raw` kernel modules | present |
 | `can-utils` | installed — `candump`, `cansend`, `cangen` in `/usr/bin` |
 | `cppcheck`, `clang-format` | missing — optional, `check.sh` skips them |
