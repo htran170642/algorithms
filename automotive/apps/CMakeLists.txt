@@ -33,3 +33,11 @@ add_subdirectory(eth_sub)
 # had to register with it.
 add_subdirectory(svc_server)
 add_subdirectory(svc_client)
+
+# Week 11. The first demo with a window, and the first one whose whole point is
+# to go wrong: three buttons doing identical work, one of which freezes the UI
+# for three seconds. Gated on Qt, the only dependency this tree does not find
+# by itself.
+if(AV_HAVE_QT)
+    add_subdirectory(qt_loop)
+endif()

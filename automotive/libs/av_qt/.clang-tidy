@@ -1,0 +1,23 @@
+# Qt-facing overrides. Two checks whose advice cannot be followed, each for a
+# concrete reason -- not because the warnings were tiresome.
+#
+# misc-include-cleaner reports `Qt::PreciseTimer`, `emit` and friends as having
+# no direct include. They come from qnamespace.h and qobjectdefs.h, headers no
+# Qt program includes by name -- Qt's public surface is the forwarding headers
+# (<QObject>, <QTimer>) and obeying the check would mean writing
+# `#include <QtCore/qobjectdefs.h>` in order to get a macro. The genuine
+# findings it raised -- <chrono>, <vector>, <cstddef> and <QObject> missing from
+# src/loop_monitor.cpp -- were fixed by hand before it was switched off, and the
+# check stays on everywhere else in the tree.
+#
+# readability-redundant-access-specifiers sees three redundant `public:` in a
+# row, because Q_SIGNALS and Q_SLOTS both expand to `public`. A Qt reader sees
+# three different kinds of member. And the advice is not merely unhelpful:
+# deleting `signals:` makes the class uncompilable, because moc reads that
+# section to learn what a signal is.
+
+InheritParentConfig: true
+
+Checks: >
+  -misc-include-cleaner,
+  -readability-redundant-access-specifiers

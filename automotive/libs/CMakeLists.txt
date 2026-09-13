@@ -10,6 +10,7 @@
 #   av_service  week 8   mini SOME/IP + VehicleService
 #               week 9   ... plus Service Discovery
 #   av_mw       week 10  the middleware: Runtime, Proxy, Skeleton
+#   av_qt       week 11  the event loop, measured -- and signal/slot semantics
 #
 # av_conc and av_ipc stay separate on purpose: one crosses a thread boundary,
 # the other crosses an address space. Conflating them hides the difference that
@@ -40,3 +41,12 @@ add_subdirectory(av_service)
 # PUBLIC (its headers name service ids) and av_eth + av_ipc PRIVATE (they do
 # not). An application links av_mw and nothing that opens a socket.
 add_subdirectory(av_mw)
+
+# av_qt is the only library gated on a dependency, because Qt is the only one
+# not in the distro's path. It deliberately depends on nothing else in this
+# tree: week 11 is about Qt's own model, and week 12 is where av_can and av_mw
+# finally meet it. Keeping that seam visible is the point -- an av_qt that
+# already knew about vehicle signals could not show where the boundary is.
+if(AV_HAVE_QT)
+    add_subdirectory(av_qt)
+endif()

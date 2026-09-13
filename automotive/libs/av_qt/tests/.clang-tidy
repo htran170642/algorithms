@@ -1,0 +1,26 @@
+# Test-only overrides. Identical to libs/av_service/tests and the other test
+# directories, so the rule for test code is one rule.
+#
+# bugprone-unchecked-optional-access cannot see through GoogleTest's assertion
+# macros: after `ASSERT_TRUE(x.has_value())` it still reports `x->foo()` as
+# unchecked. The check stays enabled for library and app code.
+#
+# readability-function-cognitive-complexity measures the *expanded* TestBody,
+# where every EXPECT_ macro is a branch.
+#
+# misc-const-correctness is off only here, and the reason is worth knowing.
+# It sees that the test body never writes to `Receiver receiver` and suggests
+# `const`. But Qt writes to it -- through a connection, by calling a non-const
+# slot on a pointer it took before constness could matter. Declaring the object
+# const and then modifying it is undefined behaviour, so the check's advice is
+# not a tidy-up but a bug. Same for QSignalSpy, which Qt appends to.
+
+InheritParentConfig: true
+
+Checks: >
+  -bugprone-unchecked-optional-access,
+  -misc-const-correctness
+
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '50'

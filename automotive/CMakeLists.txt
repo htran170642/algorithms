@@ -20,6 +20,10 @@ include(Sanitizers)
 include(StaticAnalysis)
 include(Testing)
 
+# Week 11. Optional, and last: it reads AV_SANITIZER and AV_CLANG_TIDY, and it
+# wraps av_add_test(). A machine without Qt still builds weeks 1-10.
+include(Qt)
+
 include(CTest)
 find_package(GTest REQUIRED)
 

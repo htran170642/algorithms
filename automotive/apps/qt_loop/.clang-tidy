@@ -1,0 +1,44 @@
+# Qt-facing overrides. Each check here has a concrete reason its advice cannot
+# be taken -- mostly about Qt predating the guidelines, never about the warnings
+# being tiresome. Everything that *could* be fixed was fixed first: the missing
+# <QWidget>, <QObject>, <QSize>, <QPaintEvent> and "worker.hpp" includes, and a
+# genuine bugprone-integer-division in needle.cpp that only a linter would spot.
+#
+# readability-identifier-naming: the root config asks for lower_case functions.
+# Qt names its virtuals in camelBack -- paintEvent, sizeHint -- and an override
+# has to match the base exactly or it is not an override. The check cannot tell
+# an obligation from a convention violation.
+#
+# cppcoreguidelines-owning-memory: `new QPushButton(this)` looks like a leak and
+# is not. Passing a parent hands ownership to that parent, whose destructor
+# deletes the whole subtree -- QObject parenting *is* RAII, just not a flavour
+# gsl::owner<> can express. Replacing it with unique_ptr would mean two owners
+# for one object, which is how a double free happens. The rule here instead:
+# every `new` in this directory passes a parent, and none of them is ever
+# deleted by hand. Anything that breaks that rule is a real finding.
+#
+# cppcoreguidelines-prefer-member-initializer wants five of the eight widgets
+# hoisted into the initialiser list -- exactly the five whose `new` takes only a
+# parent. It cannot suggest the other three, which also pass a label. Taking
+# half the advice would split one readable construction sequence across two
+# places for no gain, since `new Widget(this)` leaves nothing uninitialised that
+# an initialiser list would have protected.
+#
+# misc-include-cleaner and readability-redundant-access-specifiers: see
+# libs/av_qt/.clang-tidy, which explains both at length.
+#
+# misc-const-correctness wants `const QApplication app`, because main() never
+# writes to it. Qt does, constantly -- through the global qApp pointer its
+# constructor installed. Declaring an object const and then modifying it is
+# undefined behaviour, so this is one of the cases where the check names a bug
+# rather than a cleanup. libs/av_qt/tests/.clang-tidy hits the same wall.
+
+InheritParentConfig: true
+
+Checks: >
+  -readability-identifier-naming,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-prefer-member-initializer,
+  -misc-include-cleaner,
+  -readability-redundant-access-specifiers,
+  -misc-const-correctness
