@@ -147,6 +147,32 @@
 - [ ] LC 76 - Minimum Window Substring
 - [ ] LC 239 - Sliding Window Maximum
 
+01. LC643   Fixed Window
+02. LC1343  Fixed Window
+03. LC1456  Fixed Window
+04. LC1052  Fixed Window
+
+05. LC209   Variable Window
+06. LC713   Variable Window
+07. LC904   At Most 2 Distinct
+08. LC1004  At Most K violations
+09. LC1493  Variable Window
+
+10. LC159   At Most 2 Distinct
+11. LC340   At Most K Distinct
+
+12. LC76    Minimum Window
+13. LC30    Multiple Frequency Windows
+14. LC395   Frequency + Distinct
+
+15. LC930   Exactly Sum
+16. LC1248  Exactly K
+17. LC992   Exactly K Distinct
+
+18. LC239   Monotonic Deque
+19. LC1438  Min/Max Deque
+20. LC862   Prefix Sum + Deque
+
 ## Review
 
 ### Patterns Learned
