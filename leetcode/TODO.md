@@ -147,12 +147,12 @@
 - [ ] LC 76 - Minimum Window Substring
 - [ ] LC 239 - Sliding Window Maximum
 
-01. LC643   Fixed Window
-02. LC1343  Fixed Window
-03. LC1456  Fixed Window
+01. LC643   Fixed Window x
+02. LC1343  Fixed Window x
+03. LC1456  Fixed Window x
 04. LC1052  Fixed Window
 
-05. LC209   Variable Window
+05. LC209   Variable Window x
 06. LC713   Variable Window
 07. LC904   At Most 2 Distinct
 08. LC1004  At Most K violations
