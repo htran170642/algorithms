@@ -153,7 +153,7 @@
 04. LC1052  Fixed Window
 
 05. LC209   Variable Window x
-06. LC713   Variable Window
+06. LC713   Variable Window x
 07. LC904   At Most 2 Distinct
 08. LC1004  At Most K violations
 09. LC1493  Variable Window
