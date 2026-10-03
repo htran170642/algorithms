@@ -13,18 +13,21 @@ The user is learning, so explain *why* a TypeScript feature is used, not just ho
 `node_modules/` is not committed, so run `npm install` once before anything else.
 
 ```bash
-npx tsc --noEmit          # type-check the whole project
-npx tsc                   # compile; emits .js/.d.ts/.map files NEXT TO each .ts in src/
-node src/day5.js          # run one day's file after compiling
+npm run typecheck         # tsc --noEmit: type-check the whole project
+npm run dev               # tsx src/day16/index.ts: runs TS directly, NO type checking
+npm run build             # tsc: compile src/ → dist/
+npm start                 # node dist/day16/index.js
+npx tsx src/day9.ts       # run any single day's file directly
 ```
 
-There is no test runner (`npm test` is a placeholder that fails), no linter, and no `dev`/`build` scripts yet. The plan adds those on Day 16.
+`tsx` strips types without checking them, so always run `npm run typecheck` as well. There is no test runner and no linter.
 
 ## Compiler setup that affects code
 
-- The TypeScript version is `^7.x`. `tsconfig.json` has no `rootDir`/`outDir`, so output lands beside the sources. `.gitignore` ignores `src/**/*.js`, `*.d.ts` and `*.map`.
+- The TypeScript version is `^7.x`. Since Day 16, `rootDir: "./src"` and `outDir: "./dist"` put all compiled output in `dist/`. `types: ["node"]` (with `@types/node`) enables Node globals such as `process`.
 - `moduleDetection: "force"` makes every file its own module. The same names (`User`, `add`, …) can therefore be declared in several day files without conflicts.
-- `module: "nodenext"` + `package.json` `"type": "commonjs"` + `verbatimModuleSyntax` is an unusual combination, and no file uses cross-file `import`/`export` yet. When modules arrive (Day 15), run `npx tsc` and fix the config if it rejects ESM syntax in CommonJS files. Switching to `"type": "module"` (which then requires `.js` extensions on relative imports) is the usual fix. Under `verbatimModuleSyntax`, type-only imports must use `import type`.
+- The project is ESM: `package.json` has `"type": "module"` and `module: "nodenext"` is set. It was switched from CommonJS on Day 15, because `verbatimModuleSyntax` rejects `import`/`export` in CommonJS files. Relative imports must use the `.js` extension, even though the source is `.ts` (`import { x } from "./utils/validate.js"`). Type-only imports must use `import type`.
+- Multi-file days live in their own folder, e.g. `src/day16/`, with `index.ts` as the entry point (`npx tsx src/day15/index.ts`).
 - `strict` is on, along with `noUncheckedIndexedAccess` (`arr[i]` is `T | undefined`) and `exactOptionalPropertyTypes` (you cannot assign `undefined` to an optional property unless its type includes `undefined`).
 
 ---
@@ -718,11 +721,11 @@ Reusable abstractions
 
 ### Learn
 
-* [ ] `export`
-* [ ] `import`
-* [ ] ES Modules
-* [ ] CommonJS
-* [ ] Module resolution
+* [x] `export`
+* [x] `import`
+* [x] ES Modules
+* [x] CommonJS
+* [x] Module resolution
 
 ### Example
 
