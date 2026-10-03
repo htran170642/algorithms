@@ -47,5 +47,5 @@ interface Config {
 const cfg: Config = {host: "localhost", port: 3000 };
 console.log(cfg)
 
-type Settings = { theme: string };
-type Settings = { fontSize: number };
+// type Settings = { theme: string };
+// type Settings = { fontSize: number };

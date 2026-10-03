@@ -1,3 +1,34 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Repository context
+
+This is a personal TypeScript learning workspace that follows the 4-week plan below. Each `src/dayN.ts` file holds that day's exercises. The plan's checkboxes track progress. Tick an item only when the user has actually done it.
+
+The user is learning, so explain *why* a TypeScript feature is used, not just how to write it. Prefer guiding the user over writing the exercise solutions for them unless they ask for code.
+
+## Commands
+
+`node_modules/` is not committed, so run `npm install` once before anything else.
+
+```bash
+npx tsc --noEmit          # type-check the whole project
+npx tsc                   # compile; emits .js/.d.ts/.map files NEXT TO each .ts in src/
+node src/day5.js          # run one day's file after compiling
+```
+
+There is no test runner (`npm test` is a placeholder that fails), no linter, and no `dev`/`build` scripts yet. The plan adds those on Day 16.
+
+## Compiler setup that affects code
+
+- The TypeScript version is `^7.x`. `tsconfig.json` has no `rootDir`/`outDir`, so output lands beside the sources. `.gitignore` ignores `src/**/*.js`, `*.d.ts` and `*.map`.
+- `moduleDetection: "force"` makes every file its own module. The same names (`User`, `add`, …) can therefore be declared in several day files without conflicts.
+- `module: "nodenext"` + `package.json` `"type": "commonjs"` + `verbatimModuleSyntax` is an unusual combination, and no file uses cross-file `import`/`export` yet. When modules arrive (Day 15), run `npx tsc` and fix the config if it rejects ESM syntax in CommonJS files. Switching to `"type": "module"` (which then requires `.js` extensions on relative imports) is the usual fix. Under `verbatimModuleSyntax`, type-only imports must use `import type`.
+- `strict` is on, along with `noUncheckedIndexedAccess` (`arr[i]` is `T | undefined`) and `exactOptionalPropertyTypes` (you cannot assign `undefined` to an optional property unless its type includes `undefined`).
+
+---
+
 # TypeScript — 4 Week Learning Plan
 
 ## Goal
@@ -208,10 +239,10 @@ with proper types.
 
 ### Learn
 
-* [ ] `interface`
-* [ ] `type`
-* [ ] `extends`
-* [ ] Intersection `&`
+* [x] `interface`
+* [x] `type`
+* [x] `extends`
+* [x] Intersection `&`
 
 ### Interface
 
@@ -266,9 +297,9 @@ using interfaces/types.
 
 ### Learn
 
-* [ ] Union `|`
-* [ ] Intersection `&`
-* [ ] Literal types
+* [x] Union `|`
+* [x] Intersection `&`
+* [x] Literal types
 
 ### Union
 
@@ -348,12 +379,12 @@ const users: User[] = [];
 
 ### Requirements
 
-* [ ] Create user
-* [ ] Get user by ID
-* [ ] List users
-* [ ] Delete user
-* [ ] Validate basic input
-* [ ] Use proper TypeScript types
+* [x] Create user
+* [x] Get user by ID
+* [x] List users
+* [x] Delete user
+* [x] Validate basic input
+* [x] Use proper TypeScript types
 
 ---
 
@@ -363,11 +394,11 @@ const users: User[] = [];
 
 ### Learn
 
-* [ ] `typeof`
-* [ ] `instanceof`
-* [ ] `in`
-* [ ] Equality narrowing
-* [ ] Control-flow analysis
+* [x] `typeof`
+* [x] `instanceof`
+* [x] `in`
+* [x] Equality narrowing
+* [x] Control-flow analysis
 
 ### Example
 
@@ -397,8 +428,8 @@ and behave differently based on the actual type.
 
 ### Learn
 
-* [ ] Discriminated unions
-* [ ] Exhaustive checking
+* [x] Discriminated unions
+* [x] Exhaustive checking
 
 ### Example
 
@@ -436,10 +467,10 @@ type ApiResult<T> =
 
 ### Learn
 
-* [ ] Generic functions
-* [ ] Generic interfaces
-* [ ] Generic classes
-* [ ] Generic arrays
+* [x] Generic functions
+* [x] Generic interfaces
+* [x] Generic classes
+* [x] Generic arrays
 
 ### Example
 
@@ -524,12 +555,12 @@ Create a generic function that accepts only objects containing:
 
 ### Learn
 
-* [ ] `Partial<T>`
-* [ ] `Required<T>`
-* [ ] `Readonly<T>`
-* [ ] `Pick<T, K>`
-* [ ] `Omit<T, K>`
-* [ ] `Record<K, T>`
+* [x] `Partial<T>`
+* [x] `Required<T>`
+* [x] `Readonly<T>`
+* [x] `Pick<T, K>`
+* [x] `Omit<T, K>`
+* [x] `Record<K, T>`
 
 ### Example
 
@@ -573,10 +604,10 @@ type UserMap =
 
 ### Learn
 
-* [ ] `keyof`
-* [ ] `typeof`
-* [ ] Indexed access types
-* [ ] Generic key constraints
+* [x] `keyof`
+* [x] `typeof`
+* [x] Indexed access types
+* [x] Generic key constraints
 
 ### Example
 
