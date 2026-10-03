@@ -752,12 +752,12 @@ import {
 
 ### Learn
 
-* [ ] `package.json`
-* [ ] `package-lock.json`
-* [ ] `node_modules`
-* [ ] dependencies
-* [ ] devDependencies
-* [ ] npm scripts
+* [x] `package.json`
+* [x] `package-lock.json`
+* [x] `node_modules`
+* [x] dependencies
+* [x] devDependencies
+* [x] npm scripts
 
 ### Example
 
@@ -790,11 +790,11 @@ src/
 
 ### Learn
 
-* [ ] `Promise<T>`
-* [ ] `async`
-* [ ] `await`
-* [ ] `Promise.all`
-* [ ] `Promise.allSettled`
+* [x] `Promise<T>`
+* [x] `async`
+* [x] `await`
+* [x] `Promise.all`
+* [x] `Promise.allSettled`
 
 ### Example
 
@@ -820,10 +820,10 @@ Promise<void>
 
 ### Learn
 
-* [ ] `try/catch`
-* [ ] `Error`
-* [ ] `unknown`
-* [ ] Custom errors
+* [x] `try/catch`
+* [x] `Error`
+* [x] `unknown`
+* [x] Custom errors
 
 ### Example
 
