@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type { User } from "../models/user.js";
 import type { UserService } from "../services/user.service.js";
-import type { HttpResponse } from "../http.js";
+import type { HttpResponse } from "../types/http.js";
 import { ValidationError } from "../errors.js";
 import { CreateUserSchema, UpdateUserSchema } from "../models/user.schema.js";
 

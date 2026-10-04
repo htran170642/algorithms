@@ -45,11 +45,11 @@ After 4 weeks, I should be able to:
 * [ ] Use generics confidently
 * [ ] Use common utility types
 * [ ] Understand `any`, `unknown`, `never`
-* [ ] Work with async/await and `Promise<T>`
-* [ ] Build a REST API with Node.js + TypeScript
-* [ ] Understand DTOs and runtime validation
+* [x] Work with async/await and `Promise<T>`
+* [x] Build a REST API with Node.js + TypeScript
+* [x] Understand DTOs and runtime validation
 * [ ] Read and understand real-world TypeScript code
-* [ ] Build a complete TypeScript project
+* [x] Build a complete TypeScript project
 
 ---
 
@@ -949,14 +949,14 @@ src/
 
 ### Requirements
 
-* [ ] CRUD API
-* [ ] Type all request/response objects
-* [ ] Service layer
-* [ ] Repository layer
-* [ ] Error handling
-* [ ] Async/await
-* [ ] Runtime validation
-* [ ] Proper HTTP status codes
+* [x] CRUD API
+* [x] Type all request/response objects
+* [x] Service layer
+* [x] Repository layer
+* [x] Error handling
+* [x] Async/await
+* [x] Runtime validation
+* [x] Proper HTTP status codes
 
 ---
 
@@ -1305,32 +1305,32 @@ Rule:
 
 ## Must Master
 
-* [ ] Basic types
-* [ ] Objects
-* [ ] Functions
-* [ ] Interfaces
-* [ ] Type aliases
-* [ ] Union types
-* [ ] Intersection types
-* [ ] Type narrowing
-* [ ] Discriminated unions
-* [ ] Generics
-* [ ] Generic constraints
-* [ ] Utility types
-* [ ] `keyof`
-* [ ] `T[K]`
-* [ ] `unknown`
-* [ ] `any`
-* [ ] `never`
-* [ ] `Promise<T>`
-* [ ] async/await
-* [ ] Modules
-* [ ] Node.js + TypeScript
+* [x] Basic types
+* [x] Objects
+* [x] Functions
+* [x] Interfaces
+* [x] Type aliases
+* [x] Union types
+* [x] Intersection types
+* [x] Type narrowing
+* [x] Discriminated unions
+* [x] Generics
+* [x] Generic constraints
+* [x] Utility types
+* [x] `keyof`
+* [x] `T[K]`
+* [x] `unknown`
+* [x] `any`
+* [x] `never`
+* [x] `Promise<T>`
+* [x] async/await
+* [x] Modules
+* [x] Node.js + TypeScript
 
 ## Learn After the Basics
 
-* [ ] Conditional types
-* [ ] Mapped types
+* [x] Conditional types
+* [x] Mapped types
 * [ ] Advanced generic patterns
 * [ ] Decorators
 * [ ] Declaration merging
