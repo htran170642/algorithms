@@ -1,0 +1,170 @@
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="CBbAM1o6jvtvXsD6zQCT">
+        <mxGraphModel dx="1608" dy="1785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="_kDqU5_6JBqAV3MufpdQ-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="1140" width="1890" x="-420" y="-270" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-96" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="840" width="1540" x="-370" y="-20" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-97" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" value="Kubernetes Cluster" vertex="1">
+                    <mxGeometry height="30" width="135" x="-370" y="-6" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="690" width="760" x="-290" y="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" value="Control Plane" vertex="1">
+                    <mxGeometry height="30" width="110" x="-290" y="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="470" width="380" x="710" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-43" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" value="Worker Node(s)" vertex="1">
+                    <mxGeometry height="30" width="100" x="850" y="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;cloud provider APIs&lt;/b&gt;&lt;br&gt;&lt;div&gt;Load balancer, Storage, Network&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="-210" y="-220" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="90" width="405" x="110" y="-220" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" value="External systems" vertex="1">
+                    <mxGeometry height="30" width="110" x="110" y="-220" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-35" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="kubectl" vertex="1">
+                    <mxGeometry height="30" width="90" x="130" y="-180" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="CI/CD Systems" vertex="1">
+                    <mxGeometry height="30" width="90" x="255" y="-180" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Monitoring systems" vertex="1">
+                    <mxGeometry height="30" width="110" x="380" y="-180" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-98" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="136" width="200" x="1220" y="194" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-99" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="External container registries" vertex="1">
+                    <mxGeometry height="30" width="190" x="1225" y="201" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-101" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Docker Hub" vertex="1">
+                    <mxGeometry height="51" width="70" x="1245" y="251" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-102" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ECR" vertex="1">
+                    <mxGeometry height="51" width="70" x="1325" y="251" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;kube-apiserver&lt;/b&gt;&lt;div&gt;điểm giao tiếp trung tâm, xử lí mọi API requests trong cluster&lt;/div&gt;&lt;div&gt;&lt;i&gt;:6443&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="235" y="342" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;kube-controller-manager&lt;/b&gt;&lt;div&gt;đảm bảo actual state khớp với desired state&lt;/div&gt;&lt;div&gt;&lt;i&gt;:10257&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="-210" y="342" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;cloud-controller-manager&lt;/b&gt;&lt;div&gt;cầu nối giữa cụm k8s với hạ tầng cloud&lt;/div&gt;&lt;div&gt;&lt;i&gt;:10258&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="-210" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;kube-scheduler&lt;/b&gt;&lt;div&gt;người điều phối, chọn worker node phù hợp để chạy pod&lt;/div&gt;&lt;div&gt;&lt;i&gt;:10259&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="-210" y="590" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;etcd&lt;/b&gt;&lt;br&gt;&lt;div&gt;lưu toàn bộ trạng thái và dữ liệu của kubernetes cluster&lt;/div&gt;&lt;div&gt;&lt;i&gt;:2379 client · :2380 peer&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="235" y="590" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-48" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="110" width="120" x="764" y="107" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-49" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+                    <mxGeometry height="110" width="120" x="934" y="107" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-50" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Pod 1" vertex="1">
+                    <mxGeometry height="30" width="60" x="764" y="107" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-51" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Pod N" vertex="1">
+                    <mxGeometry height="30" width="60" x="934" y="107" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Container 1" vertex="1">
+                    <mxGeometry height="30" width="80" x="784" y="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-54" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Container N" vertex="1">
+                    <mxGeometry height="30" width="80" x="784" y="178" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-57" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Container 1" vertex="1">
+                    <mxGeometry height="30" width="80" x="954" y="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-94" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Container N" vertex="1">
+                    <mxGeometry height="30" width="80" x="954" y="178" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;container runtime&lt;/b&gt;&lt;div&gt;containerd / CRI-O: pull image, chạy container&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="60" width="290" x="764" y="231" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-45" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;kubelet&lt;/b&gt;&lt;div&gt;quản lý pod lifecycle&lt;/div&gt;&lt;div&gt;&lt;i&gt;systemd service · :10250&lt;/i&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="70" width="120" x="764" y="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-44" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;" value="&lt;b&gt;kube-proxy&lt;/b&gt;&lt;div&gt;Service IP → Pod IP, cân bằng tải L4 (iptables / nftables)&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="70" width="120" x="934" y="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="fix-cni" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;CNI plugin&lt;/b&gt; (Calico, Flannel...)&lt;div&gt;cấp IP &amp;amp; nối mạng pod ↔ pod&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="50" width="290" x="764" y="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-39" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5358;exitY=1;exitDx=0;exitDy=0;entryX=0.4842;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="① HTTPS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-17" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-8" value="đọc/ghi trạng thái&lt;br&gt;mTLS · :2379&lt;br&gt;(chỉ apiserver)">
+                    <mxGeometry relative="1" x="0.3" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-3" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="② watch Deployment&lt;br&gt;tạo ReplicaSet → Pod&lt;br&gt;mTLS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-18" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.321;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="③ watch Pod chưa có node&lt;br&gt;ghi Binding (nodeName)&lt;br&gt;mTLS">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="-115" y="510"/>
+                            <mxPoint x="296" y="510"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-38" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.321;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="watch Node / Service&lt;br&gt;cập nhật Node, LoadBalancer status&lt;br&gt;mTLS">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="-115" y="270"/>
+                            <mxPoint x="296" y="270"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-30" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-29" value="HTTPS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-83" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.2857;exitDx=0;exitDy=0;entryX=1;entryY=0.2;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="④ watch Pod của node mình&lt;br&gt;⑥ báo Pod / Node status · mTLS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-81" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.6444;exitDx=0;exitDy=0;entryX=0;entryY=0.8571;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-45" value="exec / logs / port-forward → :10250">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-90" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.9556;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-1" value="watch Service / EndpointSlice · mTLS">
+                    <mxGeometry relative="1" x="0.4" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="994" y="428"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="fix-cri" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.2069;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-47" value="⑤ CRI (gRPC)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Bgr43GRTF_DYlExL8lSl-103" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.4044;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="Bgr43GRTF_DYlExL8lSl-98" value="pull images · HTTPS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fix-runtime-cni" edge="1" parent="1" source="Bgr43GRTF_DYlExL8lSl-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;fontSize=11;" target="fix-cni" value="CNI">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1072" y="279"/>
+                            <mxPoint x="1072" y="485"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="fix-legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontSize=11;arcSize=4;" value="&lt;b&gt;Chú thích&lt;/b&gt;&lt;br&gt;• Mũi tên = client → server · có&amp;nbsp;&lt;i&gt;watch =&amp;nbsp;&lt;/i&gt;2 chiều&lt;br&gt;• Các thành phần k8s chỉ đọc/ghi &lt;b&gt;trạng thái cluster&lt;/b&gt; qua &lt;b&gt;kube-apiserver&lt;/b&gt;; chỉ apiserver đọc/ghi &lt;b&gt;etcd&lt;/b&gt;.&lt;br&gt;&lt;br&gt;&lt;b&gt;Luồng tạo Pod (kubectl apply Deployment)&lt;/b&gt;&lt;br&gt;① kubectl → apiserver → etcd: lưu Deployment&lt;br&gt;② controller-manager: tạo ReplicaSet → Pod&lt;br&gt;③ scheduler: chọn node cho Pod&lt;br&gt;④ kubelet: thấy Pod của node mình&lt;br&gt;⑤ runtime: sandbox + IP (CNI) → pull image → start&lt;br&gt;⑥ kubelet: báo status → apiserver" vertex="1">
+                    <mxGeometry height="200" width="430" x="710" y="560" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
